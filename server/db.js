@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { date } = require("zod");
 require("dotenv").config()
 
 const dbURL = process.env.MONGO_URL
@@ -35,9 +36,115 @@ const userSchema = new mongoose.Schema({
 });
 
 
+const accountSchema = new mongoose.Schema({
+    userId : {
+        type : mongoose.Types.ObjectId,
+        ref : 'User',
+        required : true
+    },
+    income : {
+        type : Number,
+        required : true,
+        min : 0,
+        max : 250000,
+        default : 0
+    },
+    balance : {
+        type : Number,
+        required : true,
+        min : 0,
+        default : 0
+    },
+    budget : {
+        type : Number,
+        required : true,
+        min : 0,
+        default : 0
+    },
+    date : {
+        type : Date,
+        default : Date.now(),
+        validate : {
+            validator : (value) =>{
+                return value <= Date.now();
+            },
+            message : "Date cannot be in the future"
+        }
+
+    },
+    totalSpend: {
+        type: Number,
+        default: 0, 
+        min: 0
+      },
+});
+
+
+accountSchema.pre('save', function(next){
+    if(this.balance > this.income){
+        return next(new Error('Balance cannot exceed monthly income'));
+    }
+    if(this.budget > this.balance){
+        return next(new Error('Budget cannot exceed balance'));
+    }
+    next();
+})
+
+
+
+const expenseSchema = new mongoose.Schema({
+    userId : {
+        type : mongoose.Types.ObjectId,
+        ref : 'User',
+        required : true
+    },
+    accountId : {
+        type : mongoose.Types.ObjectId,
+        ref : 'Account',
+        required : true,
+    },
+    amount : {
+        type : Number,
+        min : 0,
+        required : true
+    },
+    category : {
+        type : String,
+        enum : ['food', 'subscription', 'shopping', 'rent', 'bill', 'travel', 'other'],
+        default : 'other',
+        required : true
+    },
+    description : {
+        type : String,
+        minLength : 0,
+        default : "spend",
+    },
+    spendDate : {
+        type : Date,
+        default : Date.now(),
+        validate : {
+            validator : (value) =>{
+                return value <= Date.now();
+            },
+            message : "Date cannot be in the future"
+        }
+    },
+    createdAt : {
+        type : Date,
+        default : Date.now(),
+        validate : {
+            validator : (value) =>{
+                return value <= Date.now();
+            },
+            message : "Date cannot be in the future"
+        }
+    }
+})
 
 module.exports = {
-    User : mongoose.model('User',userSchema)
+    User : mongoose.model('User',userSchema),
+    Account : mongoose.model('Account',accountSchema),
+    Expense : mongoose.model('Expense',expenseSchema),
 }
 
 
