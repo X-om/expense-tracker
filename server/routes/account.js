@@ -215,28 +215,60 @@ accountRouter.post("/addexpense",authMiddleware,validateExpenseInput,storeExpens
 })
 
 accountRouter.get("/recentexpense",authMiddleware,async (req,res)=>{
+   const {category, startdate, enddate} = req.query;
     try{
-        const recenExpense = await Expense.find({userId : req.userId} , {_id : 0, userId : 0, accountId : 0, __v : 0})
-            .sort({spendDate : -1})
-            .limit(10)
+        const hasFilter = category || startdate || enddate;
+        if(hasFilter){
+            const query = {userId : req.userId};
+
+            if(category){
+                query.category = category;
+            }
+
+            if(startdate || enddate){
+                query.spendDate = {}
+                if(startdate){
+                    query.spendDate.$gte = new Date(startdate);
+                }
+                if(enddate){
+                    query.spendDate.$lte = new Date(enddate);
+                }
+            }
+
+            const filteredResponse = await Expense.find(query , {_id : 0, userId : 0, accountId : 0, __v : 0})
+                .sort({spendDate : -1});
+
+            if(filteredResponse.length === 0){
+                return res.status(404).json({
+                    message : "No transactions found"
+                })
+            }
+
+            return res.json(
+                {
+                    filteredResponse,
+                    total : filteredResponse.length
+                });
+        }
+
+        const recentexpense = await Expense.find({userId : req.userId} , {_id : 0, userId : 0, accountId : 0, __v: 0})
+                .sort({spendDate : -1})
+                .limit(10)
         
-        if(recenExpense.length === 0){
+        if(recentexpense.length === 0){
             return res.status(404).json({
                 message : "No transactions found"
             })
         }
 
-        res.json(
-            {
-                recenExpense,
-                total : recenExpense.length
-            });
+        res.json({
+            recentexpense,
+            total : recentexpense.length
+        })
 
     } catch(error){
-        console.log(`error while getting the recent transactions ${error}`);
-        return res.status(500).json({
-            message : "Inernal server error"
-        })
+        console.error(`Error while getting the recent transactions: ${error}`);
+        return res.status(500).json({ message: "Internal server error" });
     }
 })
 
