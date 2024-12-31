@@ -3,6 +3,7 @@ const authMiddleware = require("../middleware");
 const zod = require("zod");
 const { Account, Expense } = require("../db");
 const accountRouter = express.Router();
+const mongoose = require("mongoose");
 
 const accountInfoSchema = zod.object({
     income: zod.number()
@@ -118,7 +119,14 @@ function validateExpenseInput(req,res,next){
     next();
 }
 
-const mongoose = require('mongoose');
+const getFirstDayOfNextMonth = (date) => {
+    const givenDate = new Date(date);
+    return new Date(givenDate.getFullYear(),givenDate.getMonth()+1,1);
+}
+const getFirstDayOfMonth = (date) => {
+    const givenDate = new Date(date);
+    return new Date(givenDate.getFullYear(),givenDate.getMonth(),1);
+}
 
 async function storeExpense(req, res, next) {
     const userId = req.userId;
@@ -130,7 +138,7 @@ async function storeExpense(req, res, next) {
 
         const accountInfo = await Account.findOne(
             { userId },
-            { _id: 1, balance: 1, budget: 1, totalSpend: 1 }
+            { _id: 1, balance: 1, budget: 1, totalSpend: 1, date : 1 }
         ).session(session);
 
         if (!accountInfo) {
@@ -140,6 +148,22 @@ async function storeExpense(req, res, next) {
         }
 
         const { amount, category, description, spendDate, createdAt } = req.body;
+
+        const firstDayOfNextMonth = getFirstDayOfNextMonth(accountInfo.date);
+        const firstDayOfAccountMonth = getFirstDayOfMonth(accountInfo.date);
+        const spendDateObj = new Date(spendDate);
+
+        console.log(`first date of current month ${firstDayOfAccountMonth}`);
+        console.log(`first date of next month ${firstDayOfNextMonth}`);
+        console.log(`spend date ${spendDateObj}`);
+
+        if(spendDateObj <= firstDayOfAccountMonth || spendDateObj >= firstDayOfNextMonth){
+            await session.abortTransaction();
+            session.endSession();
+            return res.status(400).json({
+                message : "please enter the expense for this month only"
+            })
+        }
 
         if (accountInfo.balance === 0) {
             await session.abortTransaction();
@@ -155,6 +179,7 @@ async function storeExpense(req, res, next) {
         let updatedBalance = accountInfo.balance;
         if (amount > updatedBalance) {
             responsePayload.balanceAlert = "true";
+            responsePayload.exceededAmountOverBalance = updatedBalance - amount;
             updatedBalance = 0;
         } else {
             updatedBalance -= amount;
