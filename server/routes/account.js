@@ -5,6 +5,9 @@ const { Account, Expense } = require("../db");
 const accountRouter = express.Router();
 const mongoose = require("mongoose");
 
+const exportRouter = require("./export");
+
+accountRouter.use("/exportexpense",exportRouter);
 
 const accountInfoSchema = zod.object({
     income: zod.number()
@@ -243,11 +246,18 @@ accountRouter.post("/addexpense", authMiddleware, validateExpenseInput, storeExp
 })
 
 accountRouter.get("/recentexpense", authMiddleware, async (req, res) => {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+    const query = { userId: req.userId };
     const { category, startdate, enddate } = req.query;
     try {
+        const totalItems = await Expense.countDocuments(query);
+        const totalPages = Math.ceil(totalItems/limit);
+
         const hasFilter = category || startdate || enddate;
         if (hasFilter) {
-            const query = { userId: req.userId };
+            
 
             if (category) {
                 query.category = category;
@@ -271,7 +281,9 @@ accountRouter.get("/recentexpense", authMiddleware, async (req, res) => {
             }
             // console.log(query);
             const filteredResponse = await Expense.find(query, { _id: 0, userId: 0, accountId: 0, __v: 0 })
-                .sort({ spendDate: -1 });
+                .sort({ spendDate: -1 })
+                .skip(skip)
+                .limit(limit);
 
             if (filteredResponse.length === 0) {
                 return res.status(404).json({
@@ -281,13 +293,16 @@ accountRouter.get("/recentexpense", authMiddleware, async (req, res) => {
 
             return res.json(
                 {
-                    filteredResponse,
-                    total: filteredResponse.length
+                    currentPage : page,
+                    totalPages,
+                    totalItems,
+                    transactions : filteredResponse,
                 });
         }
 
         const recentexpense = await Expense.find({ userId: req.userId }, { _id: 0, userId: 0, accountId: 0, __v: 0 })
             .sort({ spendDate: -1 })
+            .skip(skip)
             .limit(10)
 
         if (recentexpense.length === 0) {
@@ -297,8 +312,10 @@ accountRouter.get("/recentexpense", authMiddleware, async (req, res) => {
         }
 
         res.json({
-            recentexpense,
-            total: recentexpense.length
+            currentPage : page,
+            totalPages,
+            totalItems,
+            transactions : recentexpense
         })
 
     } catch (error) {
