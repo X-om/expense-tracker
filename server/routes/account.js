@@ -5,6 +5,7 @@ const { Account, Expense } = require("../db");
 const accountRouter = express.Router();
 const mongoose = require("mongoose");
 
+
 const accountInfoSchema = zod.object({
     income: zod.number()
         .min(0, { message: "income cannot be less than zero, please enter the income" })
@@ -103,7 +104,8 @@ const expenseValidationSchema = zod.object({
     }),
     description: zod.string().min(0, { message: "please enter the description" }),
     spendDate: zod.string().transform((val) => new Date(val)),
-    createdAt: zod.string().transform((val) => new Date(val)).optional()
+    createdAt: zod.string().transform((val) => new Date(val)).optional(),
+    isRecurring : zod.boolean().optional()
 })
 
 function validateExpenseInput(req, res, next) {
@@ -147,7 +149,7 @@ async function storeExpense(req, res, next) {
             return res.status(404).json({ message: "Account does not exist" });
         }
 
-        const { amount, category, description, spendDate, createdAt } = req.body;
+        const { amount, category, description, spendDate, createdAt, isRecurring } = req.body;
 
         const firstDayOfNextMonth = getFirstDayOfNextMonth(accountInfo.date);
         const firstDayOfAccountMonth = getFirstDayOfMonth(accountInfo.date);
@@ -210,6 +212,7 @@ async function storeExpense(req, res, next) {
             description: description,
             spendDate: spendDate,
             createdAt: createdAt,
+            isRecurring : isRecurring,
         });
 
         await newExpense.save({ session });
@@ -252,21 +255,21 @@ accountRouter.get("/recentexpense", authMiddleware, async (req, res) => {
 
             if (startdate || enddate) {
                 query.spendDate = {}
-                console.log(startdate);
+                // console.log(startdate);
                 if (startdate) {
                     const formattedStartDate = startdate.split('-').map(part => part.padStart(2, '0')).join('-'); 
                     const startDateObj = new Date(`${formattedStartDate}T00:00:00.000Z`);
-                    console.log(startDateObj);
+                    // console.log(startDateObj);
                     query.spendDate.$gte = startDateObj;
                 }
                 if (enddate) {
                     const formattedEndDate = enddate.split('-').map(part => part.padStart(2,'0')).join('-');
                     const endDateObj = new Date(`${formattedEndDate}T00:00:00.000Z`); 
-                    console.log(endDateObj);
+                    // console.log(endDateObj);
                     query.spendDate.$lte = endDateObj;
                 }
             }
-            console.log(query);
+            // console.log(query);
             const filteredResponse = await Expense.find(query, { _id: 0, userId: 0, accountId: 0, __v: 0 })
                 .sort({ spendDate: -1 });
 
@@ -303,5 +306,72 @@ accountRouter.get("/recentexpense", authMiddleware, async (req, res) => {
         return res.status(500).json({ message: "Internal server error" });
     }
 })
+
+
+accountRouter.get("/recurrings",authMiddleware,async (req,res)=>{
+    const {category} = req.query;
+    const query = {userId : req.userId};
+    query.isRecurring = true;
+    try{
+        if(category){
+            query.category = category;
+        }
+
+        const response = await Expense.find(query,{_id : 1, category: 1, amount : 1, description : 1, spendDate : 1});
+        if(response.length === 0){
+            return res.status(404).json({
+                message : "No Recurring Expense Found"
+            });
+        }
+
+        res.json(response);
+    }catch(error){
+        console.log(`error occured during fetching data from the expense ${error}`);
+        return res.status(500).json({
+            message : "Internal server error"
+        })
+    }
+});
+
+// first fetch the recurring transaction by category filter 
+accountRouter.post("/updaterecurring", authMiddleware, async (req, res) => {
+    const { expenseId, newAmount, newCategory, newIsRecurring } = req.body;
+
+    if (!expenseId || !mongoose.Types.ObjectId.isValid(expenseId)) {
+        return res.status(400).json({ message: "Invalid or missing expenseId" });
+    }
+
+    if (newAmount === undefined && !newCategory && newIsRecurring === undefined) {
+        return res.status(400).json({ message: "No valid fields provided for update" });
+    }
+
+    const query = {};
+    if (newAmount !== undefined) {
+        if (typeof newAmount !== "number") {
+            return res.status(400).json({ message: "Amount must be a number" });
+        }
+        query.amount = newAmount;
+    }
+    if (newCategory) {
+        query.category = newCategory;
+    }
+    if (newIsRecurring !== undefined) {
+        query.isRecurring = newIsRecurring;
+    }
+
+    try {
+        const result = await Expense.updateOne({ _id: expenseId }, query);
+        if (result.matchedCount === 0) {
+            return res.status(404).json({ message: "Expense not found" });
+        }
+
+        res.json({ message: "Updated Successfully" });
+    } catch (error) {
+        console.log(`Error while updating the expense: ${error}`);
+        return res.status(500).json({
+            message: "Internal server error",
+        });
+    }
+});
 
 module.exports = accountRouter;

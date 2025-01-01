@@ -138,6 +138,10 @@ const expenseSchema = new mongoose.Schema({
             },
             message : "Date cannot be in the future"
         }
+    },
+    isRecurring : {
+        type : Boolean,
+        default : false
     }
 })
 
