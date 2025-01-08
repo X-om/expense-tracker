@@ -58,16 +58,38 @@ function accountInfoInputValidation(req, res, next) {
 async function storeAccountInfo(req, res, next) {
     const userId = req.userId;
     const payload = req.body;
-
+    
+    const session = await mongoose.startSession();
+    session.startTransaction();
     try {
-        const userAccountInfo = new Account({
-            userId: userId,
-            income: payload.income,
-            balance: payload.balance,
-            budget: payload.budget,
-            date: payload.date
-        });
-        await userAccountInfo.save();
+        const account = await Account.findOne({userId},{hasData:1}).session(session);
+        if(!account){
+            await session.abortTransaction();
+            session.endSession();
+            return res.status(500).json({
+                message : "Something went wrong !"
+            })
+        }
+        if(account.hasData !== false){
+            await session.abortTransaction();
+            session.endSession();
+            return res.status(403).json({
+                message : "Account info is already added"
+            });
+        }   
+        
+        await Account.updateOne({userId} , 
+            {
+                hasData : true,
+                income : payload.income,
+                balance : payload.balance,
+                budget : payload.budget,
+                date : Date.now(),
+            }).session(session);
+        
+        await session.commitTransaction();
+        session.endSession();
+
         next();
     } catch (error) {
         console.log(`error while storing account info in database ${error}`);

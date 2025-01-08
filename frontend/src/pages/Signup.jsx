@@ -65,7 +65,6 @@ export const Signup = () => {
         }
 
         if (Object.keys(newErrors).length > 0) {
-            console.log("Validation errors:", newErrors);
             setErrors(newErrors);
             return;
         }
@@ -111,7 +110,7 @@ export const Signup = () => {
                 <div className=" flex flex-col justify-center w-full px-16 md:px-0 md:w-fit">
 
                     <Form
-                        className="justify-center items-center w-full shadow-3xl shadow-secondary-100  border-1 border-secondary-100 rounded-2xl flex flex-col p-4 md:p-10 md:w-80"
+                        className="justify-center items-center w-full border-1 border-zink-700 rounded-2xl flex flex-col p-4 md:p-10 md:w-80"
                         validationBehavior="native"
                         validationErrors={errors}
                         onReset={() => {

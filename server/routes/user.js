@@ -1,7 +1,7 @@
 const express = require("express");
 const zod = require("zod");
 const argon2 = require("argon2");
-const { User } = require("../db");
+const { User, Account } = require("../db");
 const jwt = require("jsonwebtoken");
 const authMiddleware = require("../middleware");
 const userRouter = express.Router();
@@ -73,6 +73,8 @@ async function storeInDataBase(req,res,next){
 
     try{
         await newUser.save();
+        const userId = newUser._id;
+        await Account.create({userId});
         next();
         
     }catch(error){
@@ -140,6 +142,7 @@ async function userExistAndPasswordCheck(req, res, next){
 userRouter.post("/signin",signinInputValidation,userExistAndPasswordCheck,(req,res)=>{
     const token = jwt.sign( {userId : req.userId} , JWT_SECRET);
     res.json({
+        message : "Logging In",
         token : token
     })
 });

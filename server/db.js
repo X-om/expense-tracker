@@ -42,6 +42,10 @@ const accountSchema = new mongoose.Schema({
         ref : 'User',
         required : true
     },
+    hasData: { 
+        type : Boolean,
+        default : false
+    },
     income : {
         type : Number,
         required : true,
