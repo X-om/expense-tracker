@@ -13,7 +13,7 @@ export const Appbar = ({name}) => {
 
             <div className="flex justify-center">
                 <div className="flex flex-col justify-center items-center py-1">
-                    <Avatar showFallback isBordered name={name} size="lg"/>     
+                    <Avatar className="cursor-pointer" showFallback isBordered name={name} size="md"/>     
                 </div>
             </div>
             

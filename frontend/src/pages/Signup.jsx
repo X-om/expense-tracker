@@ -110,7 +110,7 @@ export const Signup = () => {
                 <div className=" flex flex-col justify-center w-full px-16 md:px-0 md:w-fit">
 
                     <Form
-                        className="justify-center items-center w-full border-1 border-zink-700 rounded-2xl flex flex-col p-4 md:p-10 md:w-80"
+                        className="justify-center items-center w-full border-1 border-zinc-700 rounded-2xl flex flex-col p-4 md:p-10 md:w-80"
                         validationBehavior="native"
                         validationErrors={errors}
                         onReset={() => {
