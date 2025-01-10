@@ -14,7 +14,7 @@ export const Dashboard = () => {
     const userInfo = useRecoilValueLoadable(userAtom);
     const accountInfo = useRecoilValueLoadable(accountAtom);
 
-
+    console.log(userInfo.contents)
     const navigate = useNavigate();
 
     return (
@@ -27,7 +27,7 @@ export const Dashboard = () => {
                         </div>
                     ) : userInfo.state === "hasError" ? (
                         <div className="flex flex-col justify-center w-full h-full">
-                            <AlertMessage type={"error"} message={userInfo.contents.message} onClose={() => { navigate("/signin") }} />
+                            <AlertMessage type={"error"} message={userInfo.contents.response.data.message} onClose={() => { navigate("/signin") }} />
                         </div>
                     ) : (
                         <div>
@@ -43,7 +43,7 @@ export const Dashboard = () => {
                                                     </div>
                                                 ) : accountInfo.state === "hasError" ? (
                                                     <div className="flex flex-col justify-center w-full h-full">
-                                                        <AlertMessage type={"error"} message={"Something went wrong"} onClose={() => { navigate("/signin") }} />
+                                                        <AlertMessage type={"error"} message={accountInfo.contents.response.data.message} onClose={() => { navigate("/signin") }} />
                                                     </div>
                                                 ) : (
                                                     <div>
