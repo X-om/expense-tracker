@@ -82,6 +82,7 @@ async function storeAccountInfo(req, res, next) {
             {
                 hasData : true,
                 income : payload.income,
+                initialBalance : payload.balance,
                 balance : payload.balance,
                 budget : payload.budget,
                 date : Date.now(),

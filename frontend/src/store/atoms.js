@@ -67,3 +67,8 @@ export const blurAtom = atom({
     key : "blurAtom",
     default : false  
 })
+
+export const initialBalanceAtom = atom({
+    key : "initialBalanceAtom",
+    default : 0
+})

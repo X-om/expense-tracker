@@ -1,7 +1,7 @@
-import { useRecoilValue, useRecoilValueLoadable } from "recoil"
+import { useRecoilState, useRecoilValueLoadable } from "recoil"
 import { Appbar } from "../components/Appbar"
 import { MainCard } from "../components/MainCard"
-import { accountAtom, blurAtom, userAtom } from "../store/atoms"
+import { accountAtom, blurAtom, initialBalanceAtom, userAtom } from "../store/atoms"
 import { Spinner } from "@nextui-org/react"
 import { AlertMessage } from "../components/AlertMessage"
 import { useNavigate } from "react-router-dom"
@@ -14,9 +14,8 @@ export const Dashboard = () => {
 
     const userInfo = useRecoilValueLoadable(userAtom);
     const accountInfo = useRecoilValueLoadable(accountAtom);
-    const isBlurred = useRecoilValue(blurAtom);
     const [isLoading, setIsLoading] = useState(false);
-
+    const [initialBalance,setInitialBalance] = useRecoilState(initialBalanceAtom);
     useEffect(()=>{
         if(accountInfo.state === "hasValue"  && accountInfo.contents.hasData === true){
             const timer = setTimeout(() => {
@@ -27,12 +26,16 @@ export const Dashboard = () => {
         }
     },[accountInfo]);
 
-
+    if(accountInfo.contents.hasData === true){
+        setInitialBalance(accountInfo.contents.initialBalance);
+    }
     console.log(accountInfo.contents)
+
+    
     const navigate = useNavigate();
 
     return (
-        <div className={`flex w-screen h-screen bg-gradient-to-br from-dash-form  to-dash-to  blur-${ isBlurred === true ? "sm" : 0 }`}>
+        <div className={`flex w-screen h-screen bg-gradient-to-br from-dash-form  to-dash-to `}>
             <div className="flex flex-col w-full bg-inherit">
                 {
                     userInfo.state === "loading" ? (

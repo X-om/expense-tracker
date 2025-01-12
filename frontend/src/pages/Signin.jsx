@@ -51,7 +51,7 @@ export const Signin = () => {
         }
     }
     return (
-        <div className="flex flex-col w-screen h-screen justify-center gap-4">
+        <div className="flex flex-col w-screen h-screen justify-center gap-4 bg-gradient-to-br from-dash-form  to-dash-to ">
             <div>
                 {
                     serverErrors && (

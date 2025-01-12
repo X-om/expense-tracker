@@ -12,18 +12,11 @@ import {    Button,
             DropdownItem
         } from "@nextui-org/react"
 import { useState } from "react"
-import { useRecoilState, useSetRecoilState } from "recoil";
-import { blurAtom } from "../store/atoms";
 
 
 export const Appbar = ({ name , email }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const setIsBlured = useSetRecoilState(blurAtom);
 
-    const handleDropDownToggle = (isOpen) =>{
-        setIsBlured(isOpen);
-    }
-    
 
     const menuItems = [
         "Profile",
@@ -45,7 +38,7 @@ export const Appbar = ({ name , email }) => {
 
 
             <NavbarContent as="div" justify="end">
-                <Dropdown placement="bottom-end" className="bg-opacity-20" onOpenChange={handleDropDownToggle}>
+                <Dropdown placement="bottom-end" className="bg-opacity-20" backdrop="blur" >
                     <DropdownTrigger>
                         <Avatar
                             isBordered
@@ -63,7 +56,7 @@ export const Appbar = ({ name , email }) => {
                             <p className="font-bold text-xl">{name}</p>
                             <p className="from-content2-foreground text-zinc-500">{email}</p>
                         </DropdownItem>
-                        <DropdownItem key="addPhoto">Add profile</DropdownItem>
+                        <DropdownItem key="addPhoto" className="text-secondary" color="secondary" >Add profile</DropdownItem>
                     </DropdownMenu>
                 </Dropdown>
             </NavbarContent>

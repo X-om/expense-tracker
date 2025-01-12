@@ -53,6 +53,10 @@ const accountSchema = new mongoose.Schema({
         max : 250000,
         default : 0
     },
+    initialBalance : {
+        type : Number,
+        default : 0
+    },
     balance : {
         type : Number,
         required : true,
