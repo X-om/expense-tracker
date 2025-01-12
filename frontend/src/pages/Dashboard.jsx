@@ -1,11 +1,12 @@
-import { useRecoilValueLoadable } from "recoil"
+import { useRecoilValue, useRecoilValueLoadable } from "recoil"
 import { Appbar } from "../components/Appbar"
 import { MainCard } from "../components/MainCard"
-import { accountAtom, userAtom } from "../store/atoms"
+import { accountAtom, blurAtom, userAtom } from "../store/atoms"
 import { Spinner } from "@nextui-org/react"
 import { AlertMessage } from "../components/AlertMessage"
 import { useNavigate } from "react-router-dom"
 import { AccountDataModel } from "../components/AccountDataModel"
+import { useEffect, useState } from "react"
 
 
 
@@ -13,13 +14,26 @@ export const Dashboard = () => {
 
     const userInfo = useRecoilValueLoadable(userAtom);
     const accountInfo = useRecoilValueLoadable(accountAtom);
+    const isBlurred = useRecoilValue(blurAtom);
+    const [isLoading, setIsLoading] = useState(false);
 
-    console.log(userInfo.contents)
+    useEffect(()=>{
+        if(accountInfo.state === "hasValue"  && accountInfo.contents.hasData === true){
+            const timer = setTimeout(() => {
+                setIsLoading(true);
+            }, 2000);
+
+            return () => clearTimeout(timer);
+        }
+    },[accountInfo]);
+
+
+    console.log(accountInfo.contents)
     const navigate = useNavigate();
 
     return (
-        <div className="flex w-screen h-screen">
-            <div className="flex flex-col w-full">
+        <div className={`flex w-screen h-screen bg-gradient-to-br from-dash-form  to-dash-to  blur-${ isBlurred === true ? "sm" : 0 }`}>
+            <div className="flex flex-col w-full bg-inherit">
                 {
                     userInfo.state === "loading" ? (
                         <div className=" flex flex-col justify-center w-full h-full">
@@ -27,11 +41,11 @@ export const Dashboard = () => {
                         </div>
                     ) : userInfo.state === "hasError" ? (
                         <div className="flex flex-col justify-center w-full h-full">
-                            <AlertMessage type={"error"} message={userInfo.contents.response.data.message} onClose={() => { navigate("/signin") }} />
+                            <AlertMessage type={"error"} message={userInfo.contents?.response?.data?.message || userInfo.contents.message} onClose={() => { navigate("/signin") }} />
                         </div>
                     ) : (
-                        <div>
-                            <Appbar name={"Om"} />
+                        <div className=" bg-inherit" >
+                            <Appbar name={userInfo.contents.name} email={userInfo.contents.email} /> 
                             <div>
                                 {
                                     userInfo.state === "hasValue" && (
@@ -43,7 +57,7 @@ export const Dashboard = () => {
                                                     </div>
                                                 ) : accountInfo.state === "hasError" ? (
                                                     <div className="flex flex-col justify-center w-full h-full">
-                                                        <AlertMessage type={"error"} message={accountInfo.contents.response.data.message} onClose={() => { navigate("/signin") }} />
+                                                        <AlertMessage type={"error"} message={accountInfo.contents?.response?.data?.message} onClose={() => { navigate("/signin") }} />
                                                     </div>
                                                 ) : (
                                                     <div>
@@ -56,8 +70,13 @@ export const Dashboard = () => {
                                                                 </div>
                                                             ) : (
                                                                 <h1>
-                                                                    <div className=" px-2 py-10 md:w-1/4">
-                                                                        <MainCard income={"250000"} balance={"10000"} isLoading={true} />
+                                                                    <div className=" px-2 py-10 md:w-1/4 bg-inherit">
+                                                                        <MainCard 
+                                                                            income={accountInfo.contents?.income} 
+                                                                            balance={accountInfo.contents?.balance}
+                                                                            budget={accountInfo.contents?.budget}
+                                                                            totalSpend={accountInfo.contents?.totalSpend}
+                                                                            isLoading={isLoading} />
                                                                     </div>
                                                                 </h1>
                                                             )

@@ -15,11 +15,31 @@ module.exports = {
       colors: {
         "darkBg": "#18181b",
         "dark-800": "#27272A",
+
+        "dash-form" : "#0000",
+        "dash-via" : "#0B2b26",
+        "dash-to" : "#0b1f1b"
       },
   
       
     },
   },
   darkMode: "class",
-  plugins: [nextui()],
+  plugins: [nextui({
+    prefix: "nextui", 
+      addCommonColors: false, 
+      defaultTheme: "dark", 
+      defaultExtendTheme: "dark", 
+      layout: {}, 
+      themes: {
+        light: {
+          layout: {}, 
+          colors: {}, 
+        },
+        dark: {
+          layout: {}, 
+          colors: {}, 
+        }
+      }
+  })]
 }

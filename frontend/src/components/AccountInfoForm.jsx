@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 import { Form, Input, Button } from "@nextui-org/react";
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
-export const AccountInfoForm = ({ setSuccessResponse }) => {
+export const AccountInfoForm = ({ setSuccessResponse,  }) => {
     const incomeRef = useRef();
     const balanceRef = useRef();
     const navigate = useNavigate();

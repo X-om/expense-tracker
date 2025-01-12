@@ -62,3 +62,8 @@ export const accountAtom = atom({
         }
     })
 })
+
+export const blurAtom = atom({
+    key : "blurAtom",
+    default : false  
+})
