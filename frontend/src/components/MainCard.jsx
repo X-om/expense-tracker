@@ -43,9 +43,9 @@ export const MainCard = ({ income, balance, budget, totalSpend, isLoading}) => {
                     <div className="flex flex-col bg-zinc-800 bg-opacity-20 w-full h-full rounded-lg p-2 gap-1">
                         <div className="bg-zinc-400 bg-opacity-5 rounded-lg grid grid-cols-2 gap-2 w-full p-2 overflow-scroll">
                             <Chip className="w-full bg-inherit border-1 border-secondary-400 bg-opacity-80">income: ₹ {income}</Chip>
-                            <Chip className={`w-full bg-inherit border-1 border-${balancePercentage < 15 ? "danger" : "success-400"} bg-${balancePercentage < 15 && "danger"} bg-opacity-30`}>balance: ₹ {balance}</Chip>
+                            <Chip className={`w-full bg-inherit border-1 border-${balancePercentage < 15 ? "danger" : "success"} bg-${balancePercentage < 15 && "danger"} bg-opacity-30`}>balance: ₹ {balance}</Chip>
                             <Chip className="w-full bg-inherit border-1 border-primary-400 bg-opacity-80">budget: ₹ {budget}</Chip>
-                            <Chip className={`w-full bg-inherit border-1 border-${totalSpendPercentage >= 90 ? "danger" : "warning-400"} bg-${totalSpendPercentage >= 90 && "danger"} bg-opacity-30`}>spends: ₹ {totalSpend}</Chip>
+                            <Chip className={`w-full bg-inherit border-1 border-${totalSpendPercentage >= 90 ? "danger" : "warning"} bg-${totalSpendPercentage >= 90 && "danger"} bg-opacity-30`}>spends: ₹ {totalSpend}</Chip>
                         </div>
 
                         <div className="bg-zinc-400 bg-opacity-5 rounded-lg">

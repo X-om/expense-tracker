@@ -128,7 +128,7 @@ const expenseValidationSchema = zod.object({
     category: zod.enum(['food', 'subscription', 'shopping', 'rent', 'bill', 'travel', 'other'], {
         errorMap: () => ({ message: "please select valid category" })
     }),
-    description: zod.string().min(0, { message: "please enter the description" }),
+    description: zod.string().min(0, { message: "please enter the description" }).optional(),
     spendDate: zod.string().transform((val) => new Date(val)),
     createdAt: zod.string().transform((val) => new Date(val)).optional(),
     isRecurring : zod.boolean().optional()

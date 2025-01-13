@@ -7,6 +7,9 @@ import { AlertMessage } from "../components/AlertMessage"
 import { useNavigate } from "react-router-dom"
 import { AccountDataModel } from "../components/AccountDataModel"
 import { useEffect, useState } from "react"
+import { BalanceCard } from "../components/BalanceCard"
+import { RecentTransactions } from "../components/RecentTransactions"
+import { AddExpenseButton } from "../components/AddExpenseButton"
 
 
 
@@ -72,8 +75,14 @@ export const Dashboard = () => {
                                                                     </div>
                                                                 </div>
                                                             ) : (
-                                                                <h1>
-                                                                    <div className=" px-2 py-10 md:w-1/4 bg-inherit">
+                                                                <div>
+                                                                    <div className="p-2">
+                                                                        <div className="p-2 rounded-2xl bg-default-100 bg-opacity-25">
+                                                                            <BalanceCard balance={accountInfo.contents?.balance} isLoading={isLoading}/>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div className="px-2 py-6 md:w-1/4 bg-inherit">
                                                                         <MainCard 
                                                                             income={accountInfo.contents?.income} 
                                                                             balance={accountInfo.contents?.balance}
@@ -81,7 +90,10 @@ export const Dashboard = () => {
                                                                             totalSpend={accountInfo.contents?.totalSpend}
                                                                             isLoading={isLoading} />
                                                                     </div>
-                                                                </h1>
+                                                                    <div className="border p-2">
+                                                                        <RecentTransactions/>
+                                                                    </div>
+                                                                </div>
                                                             )
                                                         }
                                                     </div>
@@ -91,13 +103,9 @@ export const Dashboard = () => {
                                     )
                                 }
                             </div>
-
                         </div>
-
-
                     )
                 }
-
             </div>
         </div>
     )
