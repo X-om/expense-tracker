@@ -244,7 +244,6 @@ userRouter.put("/updateinfo",
 
 userRouter.get("/userinfo",authMiddleware, async (req,res)=>{
     const userId = req.userId;
-    console.log("req came")
     try{
         const response = await User.findOne({_id : userId} , {_id : 0, __v : 0, hashed_password : 0 });
         if(!response){

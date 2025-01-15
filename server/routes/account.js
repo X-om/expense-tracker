@@ -176,14 +176,12 @@ async function storeExpense(req, res, next) {
         }
 
         const { amount, category, description, spendDate, createdAt, isRecurring } = req.body;
+    ;
+
 
         const firstDayOfNextMonth = getFirstDayOfNextMonth(accountInfo.date);
         const firstDayOfAccountMonth = getFirstDayOfMonth(accountInfo.date);
         const spendDateObj = new Date(spendDate);
-
-        // console.log(`first date of current month ${firstDayOfAccountMonth}`);
-        // console.log(`first date of next month ${firstDayOfNextMonth}`);
-        // console.log(`spend date ${spendDateObj}`);
 
         if (spendDateObj <= firstDayOfAccountMonth || spendDateObj >= firstDayOfNextMonth) {
             await session.abortTransaction();
@@ -259,11 +257,10 @@ async function storeExpense(req, res, next) {
 }
 
 accountRouter.post("/addexpense", authMiddleware, validateExpenseInput, storeExpense, (req, res) => {
-
     const responsePayload = req.responsePayload;
 
     res.json({
-        message: "expense added successfully",
+        message: "expense added !",
         responsePayload
     })
 })
@@ -343,7 +340,7 @@ accountRouter.get("/recentexpense", authMiddleware, async (req, res) => {
 
     } catch (error) {
         console.error(`Error while getting the recent transactions: ${error}`);
-        return res.status(500).json({ message: "Internal server error" });
+        return res.status(500).json({ message: "Internal server error"});
     }
 })
 

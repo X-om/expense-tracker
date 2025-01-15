@@ -1,7 +1,9 @@
 import { Button, Modal, ModalBody, ModalContent, ModalHeader, Skeleton, useDisclosure } from "@nextui-org/react";
 import { AddExpenseForm } from "./AddExpenseForm";
+import { useRecoilRefresher_UNSTABLE, useRecoilValue } from "recoil";
+import { initialBalanceAtom } from "../store/atoms";
 
-export const BalanceCard = ({ balance, isLoading }) => {
+export const BalanceCard = ({ balance,budget,isLoading,totalSpend }) => {
 
     const monthNames = [
         "January", "February", "March", "April", "May", "June",
@@ -11,8 +13,10 @@ export const BalanceCard = ({ balance, isLoading }) => {
     const month = monthNames[date.getMonth()];
     const year = date.getFullYear();
 
+    const initialBalance = useRecoilValue(initialBalanceAtom);
+    const balancePercentage = (balance/initialBalance) * 100;
 
-    const {isOpen, onOpen, onOpenChange} = useDisclosure();
+    const {isOpen, onOpen, onOpenChange, onClose} = useDisclosure();
 
 
     if (!isLoading) {
@@ -25,8 +29,8 @@ export const BalanceCard = ({ balance, isLoading }) => {
     return (
         <div className="grid grid-cols-5">
             <div className="col-span-3 flex flex-col gap-2">
-                <div className=" text-sm font-thin">balance</div>
-                <div className=" text-3xl font-semibold">
+                <div className=" text-sm font-thin">Balance</div>
+                <div className={`text-3xl font-semibold ${balancePercentage <= 15 && `text-danger`}`}>
                     ₹ {balance} /-
                 </div>
                 <div className=" text-sm text-gray-400">for {month} {year}</div>
@@ -43,7 +47,7 @@ export const BalanceCard = ({ balance, isLoading }) => {
                                 <>
                                 <ModalHeader>Add Expense..!</ModalHeader>
                                 <ModalBody>
-                                    <AddExpenseForm/>
+                                    <AddExpenseForm balance={balance} budget={budget} totalSpend={totalSpend} onClose={onClose}/>
                                 </ModalBody>
                             </>    
                             )

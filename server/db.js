@@ -129,10 +129,12 @@ const expenseSchema = new mongoose.Schema({
     },
     spendDate : {
         type : Date,
-        default : Date.now(),
+        default : Date.now,
         validate : {
             validator : (value) =>{
-                return value <= Date.now();
+                const currentDate = new Date().toDateString();
+                const clientDate = new Date(value).toDateString();
+                return clientDate <= currentDate;
             },
             message : "Date cannot be in the future"
         }

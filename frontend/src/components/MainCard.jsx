@@ -42,19 +42,19 @@ export const MainCard = ({ income, balance, budget, totalSpend, isLoading}) => {
                 <CardBody>
                     <div className="flex flex-col bg-zinc-800 bg-opacity-20 w-full h-full rounded-lg p-2 gap-1">
                         <div className="bg-zinc-400 bg-opacity-5 rounded-lg grid grid-cols-2 gap-2 w-full p-2 overflow-scroll">
-                            <Chip className="w-full bg-inherit border-1 border-secondary-400 bg-opacity-80">income: ₹ {income}</Chip>
-                            <Chip className={`w-full bg-inherit border-1 border-${balancePercentage < 15 ? "danger" : "success"} bg-${balancePercentage < 15 && "danger"} bg-opacity-30`}>balance: ₹ {balance}</Chip>
-                            <Chip className="w-full bg-inherit border-1 border-primary-400 bg-opacity-80">budget: ₹ {budget}</Chip>
-                            <Chip className={`w-full bg-inherit border-1 border-${totalSpendPercentage >= 90 ? "danger" : "warning"} bg-${totalSpendPercentage >= 90 && "danger"} bg-opacity-30`}>spends: ₹ {totalSpend}</Chip>
+                            <Chip className="w-full bg-inherit border-1 border-secondary-400 bg-opacity-80">Income: ₹ {income}</Chip>
+                            <Chip className={`w-full bg-inherit border-1 border-${balancePercentage < 15 ? "danger" : "success"} bg-${balancePercentage < 15 && "danger"} bg-opacity-30`}>Balance: ₹ {balance}</Chip>
+                            <Chip className="w-full bg-inherit border-1 border-primary-400 bg-opacity-80">Budget: ₹ {budget}</Chip>
+                            <Chip className={`w-full bg-inherit border-1 border-${totalSpendPercentage >= 90 ? "danger" : "warning"} bg-${totalSpendPercentage >= 90 && "danger"} bg-opacity-30`}>Spends: ₹ {totalSpend}</Chip>
                         </div>
 
                         <div className="bg-zinc-400 bg-opacity-5 rounded-lg">
                             <div className="flex justify-around py-1">
                                 <div className="border-r-1 border-zinc-500 w-full flex justify-center">
-                                    <ProgressBar color={`${balancePercentage < 15 ? "danger" : "success"}`} label={"balance"} progress={balancePercentage} progressColor={`${balancePercentage < 15 ? "danger" : "success"}`} size={"lg"} />
+                                    <ProgressBar color={`${balancePercentage < 15 ? "danger" : "success"}`} label={"Balance"} progress={balancePercentage} progressColor={`${balancePercentage < 15 ? "danger" : "success"}`} size={"lg"} />
                                 </div>
                                 <div className="w-full flex justify-center">
-                                    <ProgressBar color={`${totalSpendPercentage >= 90 ? "danger" : "warning"}`} label={"total spend"} progress={totalSpendPercentage} progressColor={`${totalSpendPercentage >= 90 ? "danger" : "warning"}`} size={"lg"} />
+                                    <ProgressBar color={`${totalSpendPercentage >= 90 ? "danger" : "warning"}`} label={"Total spend"} progress={totalSpendPercentage} progressColor={`${totalSpendPercentage >= 90 ? "danger" : "warning"}`} size={"lg"} />
                                 </div>
                             </div>
                         </div>

@@ -21,7 +21,7 @@ export const Typewriter = ({inputString , size , color}) => {
                 {charArray.map((char,index) => (
                     <motion.span
                         key={index}
-                        transition={{ duration: 1.5 }}
+                        transition={{ duration: 1 }}
                         variants={charVariants}
                     >
                         {char}
