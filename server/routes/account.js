@@ -265,6 +265,38 @@ accountRouter.post("/addexpense", authMiddleware, validateExpenseInput, storeExp
     })
 })
 
+
+accountRouter.get("/totalbycategorty",authMiddleware,async (req,res) => {
+    const userId = new mongoose.Types.ObjectId(req.userId);
+    
+    try{    
+        const expenses = await Expense.aggregate([
+            {$match : {userId : userId}},
+            {$group : {_id : "$category" , total : { $sum : "$amount"}}}
+        ]);
+        
+        if(!expenses.length){
+            return res.status(404).json({ message: "No expenses found for this user" });
+        }
+
+        const responsePayload = expenses.reduce((acc , {_id,total})=>{
+            acc[_id] = total;
+            return acc;
+        },{});
+
+        res.json(responsePayload);
+    }catch (error) {    
+        console.log(`error occured during fetching expenses ${error}`);
+        return res.status(500).json({
+            message : "Internal server error"
+        })
+    }
+
+})
+
+
+
+
 accountRouter.get("/recentexpense", authMiddleware, async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
@@ -285,21 +317,17 @@ accountRouter.get("/recentexpense", authMiddleware, async (req, res) => {
 
             if (startdate || enddate) {
                 query.spendDate = {}
-                // console.log(startdate);
                 if (startdate) {
                     const formattedStartDate = startdate.split('-').map(part => part.padStart(2, '0')).join('-'); 
                     const startDateObj = new Date(`${formattedStartDate}T00:00:00.000Z`);
-                    // console.log(startDateObj);
                     query.spendDate.$gte = startDateObj;
                 }
                 if (enddate) {
                     const formattedEndDate = enddate.split('-').map(part => part.padStart(2,'0')).join('-');
                     const endDateObj = new Date(`${formattedEndDate}T00:00:00.000Z`); 
-                    // console.log(endDateObj);
                     query.spendDate.$lte = endDateObj;
                 }
             }
-            // console.log(query);
             const filteredResponse = await Expense.find(query, { _id: 0, userId: 0, accountId: 0, __v: 0 })
                 .sort({ spendDate: -1 })
                 .skip(skip)

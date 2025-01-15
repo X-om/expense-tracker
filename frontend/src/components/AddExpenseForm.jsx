@@ -4,7 +4,7 @@ import { getLocalTimeZone, today, startOfMonth } from "@internationalized/date";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useRecoilRefresher_UNSTABLE } from "recoil";
-import { accountAtom } from "../store/atoms";
+import { accountAtom, sumOfCategoriesAtom } from "../store/atoms";
 import { Typewriter } from "./Typewriter";
 import debounce from "lodash.debounce";
 
@@ -25,6 +25,7 @@ export const AddExpenseForm = ({ balance, budget, onClose,totalSpend }) => {
         warningColor: ""
     })
     const refreshAccountInfo = useRecoilRefresher_UNSTABLE(accountAtom);
+    const refreshSumOfCategories = useRecoilRefresher_UNSTABLE(sumOfCategoriesAtom);
 
     const validateAmount = useCallback(
         debounce((value) => {
@@ -79,6 +80,7 @@ export const AddExpenseForm = ({ balance, budget, onClose,totalSpend }) => {
                 setStatusCode(200);
                 setTimeout(() => {
                     refreshAccountInfo();
+                    refreshSumOfCategories();
                     onClose()
                 }, 2000);
             }

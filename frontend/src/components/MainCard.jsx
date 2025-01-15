@@ -50,7 +50,7 @@ export const MainCard = ({ income, balance, budget, totalSpend, isLoading}) => {
 
                         <div className="bg-zinc-400 bg-opacity-5 rounded-lg">
                             <div className="flex justify-around py-1">
-                                <div className="border-r-1 border-zinc-500 w-full flex justify-center">
+                                <div className="border-r-1 border-zinc-600 w-full flex justify-center">
                                     <ProgressBar color={`${balancePercentage < 15 ? "danger" : "success"}`} label={"Balance"} progress={balancePercentage} progressColor={`${balancePercentage < 15 ? "danger" : "success"}`} size={"lg"} />
                                 </div>
                                 <div className="w-full flex justify-center">

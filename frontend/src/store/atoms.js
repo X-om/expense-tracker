@@ -63,6 +63,34 @@ export const accountAtom = atom({
     })
 })
 
+export const sumOfCategoriesAtom = atom({
+    key : "sumOfCategoriesAtom",
+    default : selector({
+        key : "sumOfCategoriesSelector",
+        get : async () => {
+            const token = localStorage.getItem("token");
+                if(!token){
+                    throw new Error("No authentication token found");
+                }
+            try{
+                const response = await axios.get(`${backendUrl}/account/totalbycategorty`,{
+                    headers : {
+                        Authorization : `Bearer ${token}`
+                    }
+                });
+                if(!response.data){
+                    throw new Error("No expense data received");
+                }
+
+                return response.data;
+
+            }catch(error){
+                throw error;
+            }
+        }
+    })
+})
+
 export const blurAtom = atom({
     key : "blurAtom",
     default : false  
