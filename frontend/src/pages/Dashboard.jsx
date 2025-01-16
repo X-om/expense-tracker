@@ -11,6 +11,7 @@ import { BalanceCard } from "../components/BalanceCard"
 import { RecentTransactions } from "../components/RecentTransactions"
 import { AddExpenseButton } from "../components/AddExpenseButton"
 import { TotalSpendCard } from "../components/TotalSpendCard"
+import { WarningIcon } from "../components/WarningIcon"
 
 
 
@@ -78,12 +79,12 @@ export const Dashboard = () => {
                             <AlertMessage type={"error"} message={userInfo.contents?.response?.data?.message || userInfo.contents.message} onClose={() => { navigate("/signin") }} />
                         </div>
                     ) : (
-                        <div className="bg-inherit grid grid-rows-12 h-full" >
-                            <div className=" row-span-2">
+                        <div className="bg-inherit flex flex-col gap-4 h-full" >
+                            <div >
                                 <Appbar name={userInfo.contents.name} email={userInfo.contents.email} />
                             </div>
 
-                            <div className="row-span-10">
+                            <div>
                                 {
                                     userInfo.state === "hasValue" && (
                                         <div className="h-full">
@@ -120,31 +121,8 @@ export const Dashboard = () => {
                                                                         <div className="p-2 rounded-2xl bg-default-100 bg-opacity-25">
                                                                             {warningAndError.totalSpendWarning && (
                                                                                 <div className={`text-${warningAndError.warningColor} text-xs flex gap-2`}>
-                                                                                <div className="flex justify-center items-center">
-                                                                                        <svg
-                                                                                            fill={warningAndError.svgFillCode}
-                                                                                            version="1.1"
-                                                                                            id="Capa_1"
-                                                                                            xmlns="http://www.w3.org/2000/svg"
-                                                                                            xmlns:xlink="http://www.w3.org/1999/xlink"
-                                                                                            viewBox="0 0 478.125 478.125"
-                                                                                            xml:space="preserve"
-                                                                                            className="w-6 h-6"
-                                                                                        >
-                                                                                            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                                                                                            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-                                                                                            <g id="SVGRepo_iconCarrier">
-                                                                                                <g>
-                                                                                                    <g>
-                                                                                                        <g>
-                                                                                                            <circle cx="239.904" cy="314.721" r="35.878"></circle>
-                                                                                                            <path d="M256.657,127.525h-31.9c-10.557,0-19.125,8.645-19.125,19.125v101.975c0,10.48,8.645,19.125,19.125,19.125h31.9 c10.48,0,19.125-8.645,19.125-19.125V146.65C275.782,136.17,267.138,127.525,256.657,127.525z"></path>
-                                                                                                            <path d="M239.062,0C106.947,0,0,106.947,0,239.062s106.947,239.062,239.062,239.062c132.115,0,239.062-106.947,239.062-239.062 S371.178,0,239.062,0z M239.292,409.734c-94.171,0-170.595-76.348-170.595-170.596c0-94.248,76.347-170.595,170.595-170.595 s170.595,76.347,170.595,170.595C409.887,333.387,333.464,409.734,239.292,409.734z"></path>
-                                                                                                        </g>
-                                                                                                    </g>
-                                                                                                </g>
-                                                                                            </g>
-                                                                                        </svg>
+                                                                                    <div className="flex justify-center items-center">
+                                                                                        <WarningIcon svgFillCode={warningAndError.svgFillCode}/>    
                                                                                     </div>
                                                                                     <div className="flex justify-center items-center">
                                                                                         <p>Warning! {warningAndError.totalSpendWarning}</p>

@@ -1,23 +1,30 @@
-import {    Button,
-            Navbar,
-            NavbarContent, 
-            NavbarMenu, 
-            NavbarMenuItem,
-            NavbarMenuToggle, 
-            Link, 
-            Dropdown, 
-            DropdownTrigger, 
-            Avatar, 
-            DropdownMenu,
-            DropdownItem
-        } from "@nextui-org/react"
+import {
+    Button,
+    Navbar,
+    NavbarContent,
+    NavbarMenu,
+    NavbarMenuItem,
+    NavbarMenuToggle,
+    Link,
+    Dropdown,
+    DropdownTrigger,
+    Avatar,
+    DropdownMenu,
+    DropdownItem,
+    Input,
+    Modal,
+    ModalContent,
+    ModalHeader,
+    ModalBody,
+    useDisclosure,
+} from "@nextui-org/react"
 import { useState } from "react"
+import { SearchIcon } from "./SearchIcon";
 
 
-export const Appbar = ({ name , email }) => {
+export const Appbar = ({ name, email }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-
+    const {isOpen,onOpen, onOpenChange, onClose} = useDisclosure();
     const menuItems = [
         "Profile",
         "Dashboard",
@@ -27,69 +34,95 @@ export const Appbar = ({ name , email }) => {
     ];
 
     return (
-        <Navbar isMenuOpen={isMenuOpen} onMenuOpenChange={setIsMenuOpen} isBordered isBlurred className="bg-inherit">
-            {/* add navbar brand */}
-            <NavbarContent>
-                <NavbarMenuToggle
-                    aria-label={isMenuOpen ? 'close menu' : 'open menu'}
-                    className="md:hidden"
-                />
-            </NavbarContent>
+        <div>
+            <Navbar isMenuOpen={isMenuOpen} onMenuOpenChange={setIsMenuOpen} isBordered isBlurred className="bg-inherit">
+                
+                <NavbarContent className="flex gap-6">
+                    <NavbarMenuToggle
+                        aria-label={isMenuOpen ? 'close menu' : 'open menu'}
+                        className="md:hidden"
+                    />
 
+                    
+                   <div className={`flex flex-col w-full pl-2 gap-2 cursor-pointer ${isMenuOpen ? 'hidden' : 'visible'}`} onClick={onOpen}>
+                        <p className="text-md text-zinc-400 hover:text-zinc-200 font-normal">search</p>
+                        <div className="border-t-1 border-zinc-400 animate-pulse"></div>
+                   </div>
+                    
+                    
+                </NavbarContent>
+                
+                
 
-            <NavbarContent as="div" justify="end">
-                <Dropdown placement="bottom-end" className="bg-opacity-20" backdrop="blur" >
-                    <DropdownTrigger>
-                        <Avatar
-                            isBordered
-                            as="button"
-                            className=" transition-transform text-white"
-                            showFallback
-                            fallback={
-                                <CameraIcon className=" animate-pulse w-6 h-6 text-default-500" fill="currentColor" size={20} />
-                            }
-                            size="md"
-                        />
-                    </DropdownTrigger>
-                    <DropdownMenu aria-label="Prpfile action" variant="flat" className="bg-inherit">
-                        <DropdownItem key="profile" className="h-14 gap-4 p-2">
-                            <p className="font-bold text-xl">{name}</p>
-                            <p className="from-content2-foreground text-zinc-500">{email}</p>
-                        </DropdownItem>
-                        <DropdownItem key="addPhoto" className="text-secondary" color="secondary" >Add profile</DropdownItem>
-                    </DropdownMenu>
-                </Dropdown>
-            </NavbarContent>
+                <NavbarContent as="div" className="items-center" justify="end">
+                    <Dropdown placement="bottom-end" className="bg-opacity-20" backdrop="blur" >
+                        <DropdownTrigger>
+                            <Avatar
+                                isBordered
+                                as="button"
+                                className={`transition-transform text-white ${isMenuOpen ? "hidden" : "visible"}`}
+                                showFallback
+                                fallback={
+                                    <CameraIcon className=" animate-pulse w-6 h-6 text-default-500" fill="currentColor" size={20} />
+                                }
+                                size="md"
+                            />
+                        </DropdownTrigger>
+                        <DropdownMenu aria-label="Prpfile action" variant="flat" className="bg-inherit">
+                            <DropdownItem key="profile" className="h-14 gap-4 p-2">
+                                <p className="font-bold text-xl">{name}</p>
+                                <p className="from-content2-foreground text-zinc-500">{email}</p>
+                            </DropdownItem>
+                            <DropdownItem key="addPhoto" className="text-secondary" color="secondary" >Add profile</DropdownItem>
+                        </DropdownMenu>
+                    </Dropdown>
+                </NavbarContent>
 
-            <NavbarMenu className="bg-inherit grid grid-rows-5 h-full gap-3">
-                <div className="row-span-3 flex flex-col gap-4">
-                    {menuItems.map((item, index) => (
-                        <NavbarMenuItem key={`${item}-${index}`}>
-                            {
-                                index !== menuItems.length - 1 && (
-                                    <Link
-                                        className=" text-zinc-300"
-                                        href="#"
-                                        size="lg"
-                                    >
-                                        {item}
-                                    </Link>
-                                )
-                            }
+                <NavbarMenu className="bg-inherit grid grid-rows-5 h-full gap-3">
+                    <div className="row-span-3 flex flex-col gap-4">
+                        {menuItems.map((item, index) => (
+                            <NavbarMenuItem key={`${item}-${index}`}>
+                                {
+                                    index !== menuItems.length - 1 && (
+                                        <Link
+                                            className=" text-zinc-300"
+                                            href="#"
+                                            size="lg"
+                                        >
+                                            {item}
+                                        </Link>
+                                    )
+                                }
 
+                            </NavbarMenuItem>
+                        ))}
+                    </div>
+                    <div className="row-span-1 self-end">
+                        <NavbarMenuItem>
+                            <Button color="danger" variant="ghost" size="md" className=" rounded-full">
+                                Log out
+                            </Button>
                         </NavbarMenuItem>
-                    ))}
-                </div>
-                <div className="row-span-1 self-end">
-                    <NavbarMenuItem>
-                        <Button color="danger" variant="ghost" size="md" className=" rounded-full">
-                            Log out
-                        </Button>
-                    </NavbarMenuItem>
-                </div>
+                    </div>
 
-            </NavbarMenu>
-        </Navbar>
+                </NavbarMenu>
+            </Navbar>
+
+            <Modal  isOpen={isOpen} onOpenChange={onOpenChange} backdrop="blur" size="full">
+            <ModalContent className="bg-opacity-50">
+                        {
+                            () => (
+                                <>
+                                <ModalHeader>Add Expense..!</ModalHeader>
+                                <ModalBody>
+                                    
+                                </ModalBody>
+                            </>    
+                            )
+                        }
+                    </ModalContent>
+            </Modal>
+        </div>
     )
 }
 
