@@ -8,8 +8,6 @@ import { useNavigate } from "react-router-dom"
 import { AccountDataModel } from "../components/AccountDataModel"
 import { useEffect, useMemo, useState } from "react"
 import { BalanceCard } from "../components/BalanceCard"
-import { RecentTransactions } from "../components/RecentTransactions"
-import { AddExpenseButton } from "../components/AddExpenseButton"
 import { TotalSpendCard } from "../components/TotalSpendCard"
 import { WarningIcon } from "../components/WarningIcon"
 
@@ -50,7 +48,7 @@ export const Dashboard = () => {
                 obj.svgFillCode = "#facc15";
             } else if (totalSpendPercentage >= 75) {
                 obj.totalSpendWarning = "Spend carefully, you'll reach the budget soon !";
-                obj.warningColor = "default";
+                obj.warningColor = "zinc-200";
                 obj.svgFillCode = "#FAFAFA";
             } 
 
@@ -80,7 +78,7 @@ export const Dashboard = () => {
                         </div>
                     ) : (
                         <div className="bg-inherit flex flex-col gap-4 h-full" >
-                            <div >
+                            <div>
                                 <Appbar name={userInfo.contents.name} email={userInfo.contents.email} />
                             </div>
 

@@ -21,7 +21,7 @@ export const TotalSpendCard = ({ budget, isLoading, totalSpend }) => {
         } else if (value >= 75) {
             setTotalSpendColor("text-warning");
         } else {
-            setTotalSpendColor("text-default");
+            setTotalSpendColor("text-zinc-300");
         }
 
     }, [totalSpend, budget]);

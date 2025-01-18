@@ -40,10 +40,10 @@ export const BalanceCard = ({ balance,budget,isLoading,totalSpend }) => {
                     Add Expense
                 </Button>
 
-                <Modal isOpen={isOpen} onOpenChange={onOpenChange} backdrop="blur">
-                    <ModalContent className="bg-opacity-50">
+                <Modal className="fixed inset-y-auto" isOpen={isOpen} onOpenChange={onOpenChange} backdrop="blur">
+                    <ModalContent className="bg-opacity-50 overflow-auto max-h-screen">
                         {
-                            () => (
+                            (onClose) => (
                                 <>
                                 <ModalHeader>Add Expense..!</ModalHeader>
                                 <ModalBody>
