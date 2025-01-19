@@ -100,3 +100,32 @@ export const initialBalanceAtom = atom({
     key : "initialBalanceAtom",
     default : 0
 })
+
+export const profileImageInfoAtom = atom({
+    key : "profileImageInfoAtom",
+    default : selector ({
+        key : "profileImageInfoSelector",
+        get : async () => {
+            const token = localStorage.getItem("token");
+            if(!token)
+                throw new Error('No authentication token found');  
+            
+            try{
+                const response = await axios.get(`${backendUrl}/user/profileimage`,{
+                    headers : {
+                        Authorization : `Bearer ${token}`
+                    }
+                });
+
+                if(!response.data){
+                    throw new Error("No expense data received");
+                }
+
+                return response.data
+
+            }catch (error){
+                throw error;
+            }
+        }
+    })
+})

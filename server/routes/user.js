@@ -1,7 +1,7 @@
 const express = require("express");
 const zod = require("zod");
 const argon2 = require("argon2");
-const { User, Account } = require("../db");
+const { User, Account, ProfileImage } = require("../db");
 const jwt = require("jsonwebtoken");
 const authMiddleware = require("../middleware");
 const userRouter = express.Router();
@@ -75,6 +75,7 @@ async function storeInDataBase(req,res,next){
         await newUser.save();
         const userId = newUser._id;
         await Account.create({userId});
+        await ProfileImage.create({userId});
         next();
         
     }catch(error){
@@ -260,6 +261,40 @@ userRouter.get("/userinfo",authMiddleware, async (req,res)=>{
     }
 })
 
+userRouter.get("/profileimage",authMiddleware, async (req,res) => {
+    const userId = req.userId;
+    try{
+        const imageInfo = await ProfileImage.findOne({userId:userId} , {_id : 0 , userId : 0, __v : 0});
 
+        if(!imageInfo){
+            return res.status(404).json({
+                message : "Image info not found"
+            })
+        }
+
+        res.json(imageInfo);
+    } catch(error){
+        console.log(`error occured during fetching the profile image info ${error}`);
+        return res.status(500).json({
+            message : "Internal server error"
+        })
+    }
+})
+
+userRouter.put("/addprofileimage",authMiddleware,async (req,res)=> {
+    const userId = req.userId;
+    const { url } = req.body;
+    try{
+        await ProfileImage.updateOne({userId : userId},{hasImage : true ,imageUrl : url});
+        return res.json({
+            message : "image url updated successfully !"
+        })
+    } catch(error){ 
+        console.log(`error occured during update ${error}`);
+        return res.status(500).json({
+            message : "Internal server error"
+        })
+    }
+})
 
 module.exports = userRouter;

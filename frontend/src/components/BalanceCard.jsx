@@ -2,6 +2,8 @@ import { Button, Modal, ModalBody, ModalContent, ModalHeader, Skeleton, useDiscl
 import { AddExpenseForm } from "./AddExpenseForm";
 import { useRecoilRefresher_UNSTABLE, useRecoilValue } from "recoil";
 import { initialBalanceAtom } from "../store/atoms";
+import { memo } from "react";
+
 
 export const BalanceCard = ({ balance,budget,isLoading,totalSpend }) => {
 
@@ -58,3 +60,5 @@ export const BalanceCard = ({ balance,budget,isLoading,totalSpend }) => {
         </div>
     )
 }
+
+

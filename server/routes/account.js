@@ -298,21 +298,33 @@ accountRouter.get("/totalbycategorty",authMiddleware,async (req,res) => {
 
 
 accountRouter.get("/recentexpense", authMiddleware, async (req, res) => {
+    console.log("req came");
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
     const query = { userId: req.userId };
-    const { category, startdate, enddate } = req.query;
+    const { category, startdate, enddate, description } = req.query;
+
+    
     try {
         const totalItems = await Expense.countDocuments(query);
         const totalPages = Math.ceil(totalItems/limit);
 
-        const hasFilter = category || startdate || enddate;
+        const hasFilter = category || startdate || enddate || description;
         if (hasFilter) {
             
-
             if (category) {
-                query.category = category;
+                const newCategory = category.split(",");            
+                
+                if (newCategory.length > 0) {
+                    query.category = { $in: newCategory }; 
+                }
+            }
+
+            if(description) {
+                if(description.length > 0){
+                    query.description = { $regex : description , $options : 'i'}
+                }
             }
 
             if (startdate || enddate) {

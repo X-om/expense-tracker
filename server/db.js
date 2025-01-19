@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const { date } = require("zod");
+const { date, boolean } = require("zod");
 require("dotenv").config()
 
 const dbURL = process.env.MONGO_URL
@@ -156,10 +156,27 @@ const expenseSchema = new mongoose.Schema({
     }
 })
 
+
+const profileImageSchema = new mongoose.Schema({
+    userId : {
+        type : mongoose.Types.ObjectId,
+        ref : 'User',
+        required : true
+    },
+    hasImage : {
+        type : Boolean,
+        default : false
+    },
+    imageUrl : {
+        type : String,
+        default : ""
+    }
+});
 module.exports = {
     User : mongoose.model('User',userSchema),
     Account : mongoose.model('Account',accountSchema),
     Expense : mongoose.model('Expense',expenseSchema),
+    ProfileImage : mongoose.model('ProfileImage',profileImageSchema)
 }
 
 

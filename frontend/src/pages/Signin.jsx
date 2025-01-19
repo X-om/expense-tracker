@@ -45,7 +45,7 @@ export const Signin = () => {
             }
         }catch(error){
             console.error("Error submitting the form:", error.response?.data || error.message);
-            if(error.response.status !== 200){
+            if(error.response?.status !== 200){
                 setServerErrors(error.response?.data?.message || "An unexpected error occured")
             }
         }

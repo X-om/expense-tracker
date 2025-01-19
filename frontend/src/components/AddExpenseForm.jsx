@@ -18,14 +18,17 @@ export const AddExpenseForm = ({ balance, budget, onClose,totalSpend }) => {
     const [message, setMessage] = useState();
     const [messageColor, setColor] = useState();
     const [statusCode,setStatusCode] = useState();
-    const currentDate = today(getLocalTimeZone());
-    const firstDay = startOfMonth(currentDate);
     const [warnings, setWarning] = useState({
         warningMessage: "",
         warningColor: ""
     })
     const refreshAccountInfo = useRecoilRefresher_UNSTABLE(accountAtom);
     const refreshSumOfCategories = useRecoilRefresher_UNSTABLE(sumOfCategoriesAtom);
+
+
+    const currentDate = today(getLocalTimeZone());
+    const firstDay = startOfMonth(currentDate);
+    
 
     const validateAmount = useCallback(
         debounce((value) => {
@@ -188,8 +191,8 @@ export const AddExpenseForm = ({ balance, budget, onClose,totalSpend }) => {
                 <div className="w-full grid grid-cols-5">
                     <div className="col-span-2">
                         <DatePicker
-                            defaultValue={today(getLocalTimeZone()).subtract({ days: 1 })}
-                            label="Date and time"
+                            defaultValue={today(getLocalTimeZone())}
+                            label="Date"
                             minValue={firstDay}
                             maxValue={today(getLocalTimeZone())}
                             variant="underlined"
