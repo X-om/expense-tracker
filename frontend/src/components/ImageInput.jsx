@@ -121,6 +121,7 @@ export const ImageInput = ({ setOpenImageInput }) => {
             backdrop="blur"
             size="md"
             placement="center"
+            className="bg-opacity-50"
             
         >
             <ModalContent>

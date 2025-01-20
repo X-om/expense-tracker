@@ -65,7 +65,7 @@ export const Dashboard = () => {
     const navigate = useNavigate();
 
     return (
-        <div className={`flex w-screen h-screen bg-gradient-to-br from-dash-form  to-dash-to `}>
+        <div className={`flex w-screen h-screen bg-gradient-to-br from-dash-form  to-dash-to`}>
             <div className="flex flex-col w-full bg-inherit">
                 {
                     userInfo.state === "loading" ? (

@@ -5,7 +5,6 @@ import {
     NavbarMenu,
     NavbarMenuItem,
     NavbarMenuToggle,
-    Link,
     Dropdown,
     DropdownTrigger,
     Avatar,
@@ -18,14 +17,15 @@ import {
     useDisclosure,
     Spinner,
 } from "@nextui-org/react";
-import { memo, useState, useEffect, useMemo } from "react";
+import { Link } from "react-router-dom";
+import { memo, useState, useMemo } from "react";
 import { RecentTransactions } from "./RecentTransactions";
 import { ImageInput } from "./ImageInput";
 import { useRecoilValueLoadable } from "recoil";
 import { profileImageInfoAtom } from "../store/atoms";
 import { AlertMessage } from "./AlertMessage";
 
-export const Appbar = ({ name, email }) => {
+export const Appbar = ({ name, email, hideNavAvtar }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const profileImage = useRecoilValueLoadable(profileImageInfoAtom);
@@ -38,7 +38,7 @@ export const Appbar = ({ name, email }) => {
     );
 
 
-
+    console.log(profileImage.contents)
     return (
         <div>
             <Navbar
@@ -79,7 +79,7 @@ export const Appbar = ({ name, email }) => {
                                         isBordered
                                         as="button"
                                         src={profileImage.contents.imageUrl}
-                                        className={`transition-transform text-white ${isMenuOpen ? "hidden" : "visible"}`}
+                                        className={`transition-transform text-white ${isMenuOpen ? "hidden" : "visible"} ${hideNavAvtar && 'hidden'}`}
                                         showFallback
                                         fallback={
                                             <CameraIcon
@@ -107,7 +107,7 @@ export const Appbar = ({ name, email }) => {
                                 color="secondary"
                                 onPress={() => setOpenImageInput(true)}
                             >
-                                Add Profile Picture
+                                {profileImage.contents.hasImage === true ? (<>Change profile picture</>) :  (<>Add profile picture</>)}
                             </DropdownItem>
                         </DropdownMenu>
                     </Dropdown>
@@ -118,7 +118,7 @@ export const Appbar = ({ name, email }) => {
                         {menuItems.map((item, index) => (
                             <NavbarMenuItem key={`${item}-${index}`}>
                                 {index !== menuItems.length - 1 && (
-                                    <Link className="text-zinc-300" href="#" size="lg">
+                                    <Link className="text-zinc-300" to={`/${item.toLowerCase()}`} size="lg">
                                         {item}
                                     </Link>
                                 )}

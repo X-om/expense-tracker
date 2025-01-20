@@ -106,6 +106,7 @@ export const profileImageInfoAtom = atom({
     default : selector ({
         key : "profileImageInfoSelector",
         get : async () => {
+            new Promise((r) => setTimeout(r,3000));
             const token = localStorage.getItem("token");
             if(!token)
                 throw new Error('No authentication token found');  
@@ -120,7 +121,7 @@ export const profileImageInfoAtom = atom({
                 if(!response.data){
                     throw new Error("No expense data received");
                 }
-
+                
                 return response.data
 
             }catch (error){

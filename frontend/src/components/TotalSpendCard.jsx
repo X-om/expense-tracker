@@ -2,7 +2,7 @@ import { Pagination, Skeleton, Spinner, Tab, Tabs } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import { useRecoilValueLoadable } from "recoil";
 import { sumOfCategoriesAtom } from "../store/atoms";
-import { AlertMessage } from "./AlertMessage";
+
 
 
 
@@ -52,7 +52,7 @@ export const TotalSpendCard = ({ budget, isLoading, totalSpend }) => {
                             sumOfCategories.state === "loading" ? (
                                 <Spinner />
                             ) : sumOfCategories.state === "hasError" ? (
-                                <AlertMessage type={"error"} message={sumOfCategories.contents?.response?.data?.message || "Internal server error"} />
+                                <div className="text-danger font-semibold flex justify-center">No expense found !</div>
                             ) : (
                                     <div className="w-full flex flex-col gap-2 bg-zinc-400 bg-opacity-5 rounded-lg py-2 border-zinc-700">
                                         <div className="flex w-full justify-center items-center text-2xl font-semibold text-zinc-300">{category}</div>
