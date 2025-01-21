@@ -1,7 +1,7 @@
 const express = require("express");
 const authMiddleware = require("../middleware");
 const zod = require("zod");
-const { Account, Expense } = require("../db");
+const { Account, Expense, User } = require("../db");
 const accountRouter = express.Router();
 const mongoose = require("mongoose");
 
@@ -294,11 +294,7 @@ accountRouter.get("/totalbycategorty",authMiddleware,async (req,res) => {
 
 })
 
-
-
-
 accountRouter.get("/recentexpense", authMiddleware, async (req, res) => {
-    console.log("req came");
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
@@ -450,5 +446,32 @@ accountRouter.post("/updaterecurring", authMiddleware, async (req, res) => {
         });
     }
 });
+
+accountRouter.get("/allexportmonths",authMiddleware,async (req,res)=> {
+    const userId = req.userId;
+    const account = await Account.findOne({userId : userId}, {date : 1});
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+    const startMonth = account.date.getMonth();
+    const startYear = account.date.getFullYear();
+
+    const date = new Date();
+
+    const currentMonth = date.getMonth();
+    const currentYear = date.getFullYear();
+    const response = [];
+    
+        for(let j = startMonth; j<=currentMonth; j++){
+            const val = `${monthNames[j]} ${startYear}`;
+            response.push(val);
+        }
+
+    res.json(response);
+    
+    
+})
+
+
+
 
 module.exports = accountRouter;

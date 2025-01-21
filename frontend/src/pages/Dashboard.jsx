@@ -79,7 +79,7 @@ export const Dashboard = () => {
                     ) : (
                         <div className="bg-inherit flex flex-col gap-4 h-full" >
                             <div>
-                                <Appbar name={userInfo.contents.name} email={userInfo.contents.email} />
+                                <Appbar name={userInfo.contents.name} email={userInfo.contents.email} hideTransactions={false} />
                             </div>
 
                             <div>

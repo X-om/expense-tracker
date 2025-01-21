@@ -4,6 +4,8 @@ import { Signin } from "./pages/Signin"
 import { Dashboard } from "./pages/Dashboard"
 import { RecoilRoot } from "recoil"
 import { Profile } from "./pages/Profile"
+import { Exports } from "./pages/Exports"
+import { Analytics } from "./pages/Analytics"
 
 function App() {
 
@@ -16,6 +18,8 @@ function App() {
             <Route path="/signin" element={<Signin/>}/>
             <Route path="/dashboard" element={<Dashboard/>}/>
             <Route path="/profile" element={<Profile/>}/>
+            <Route path="/exports" element={<Exports/>}/>
+            <Route path="/analytics" element={<Analytics/>}/>
           </Routes>
         </BrowserRouter>    
       </RecoilRoot>

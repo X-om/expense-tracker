@@ -25,15 +25,18 @@ import { useRecoilValueLoadable } from "recoil";
 import { profileImageInfoAtom } from "../store/atoms";
 import { AlertMessage } from "./AlertMessage";
 
-export const Appbar = ({ name, email, hideNavAvtar }) => {
+export const Appbar = ({ name, email, hideNavAvtar, hideTransactions }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const profileImage = useRecoilValueLoadable(profileImageInfoAtom);
     const [openImageInput, setOpenImageInput] = useState(false);
 
+    const logOutOperation = () => {
+
+    }
 
     const menuItems = useMemo(
-        () => ["Profile", "Dashboard", "Activity", "Analytics", "Log Out"],
+        () => ["Profile", "Dashboard", "Exports", "Analytics", "Log Out"],
         []
     );
 
@@ -58,8 +61,7 @@ export const Appbar = ({ name, email, hideNavAvtar }) => {
                         className={`${isMenuOpen ? "hidden" : "visible"}`}
                     />
                     <div
-                        className={`p-2 flex justify-center items-center ${isMenuOpen ? "hidden" : "visible"
-                            }`}
+                        className={`p-2 flex justify-center items-center ${isMenuOpen ? "hidden" : "visible"} ${hideTransactions ? 'hidden' : 'visible'}`}
                         onClick={onOpen}
                         aria-label="View Recent Transactions"
                     >
@@ -70,9 +72,9 @@ export const Appbar = ({ name, email, hideNavAvtar }) => {
                 <NavbarContent as="div" className="items-center" justify="end">
                     <Dropdown placement="bottom-end" backdrop="blur">
                             {profileImage.state === "loading" ? (
-                                <Spinner />
+                                <Spinner className={`${isMenuOpen ? "hidden" : "visible"} ${hideNavAvtar && 'hidden'}`} />
                             ) : profileImage.state === "hasError" ? (
-                                <AlertMessage type={"error"} message={"Error during fetching the image url"} />
+                                <div className={`${isMenuOpen ? "hidden" : "visible"} ${hideNavAvtar && 'hidden'}`}><AlertMessage  type={"error"} message={"Error during fetching the image url"} /></div>
                             ) : (
                                 <DropdownTrigger>
                                     <Avatar
@@ -127,7 +129,7 @@ export const Appbar = ({ name, email, hideNavAvtar }) => {
                     </div>
                     <div className="row-span-1 self-end">
                         <NavbarMenuItem>
-                            <Button color="danger" variant="ghost" size="md" className="rounded-full">
+                            <Button onPress={logOutOperation} color="danger" variant="ghost" size="md" className="rounded-full">
                                 Log Out
                             </Button>
                         </NavbarMenuItem>
@@ -146,7 +148,7 @@ export const Appbar = ({ name, email, hideNavAvtar }) => {
                 <ModalContent className="bg-opacity-50 overflow-scroll max-h-screen">
                     {() => (
                         <ModalBody className="max-h-screen">
-                            <RecentTransactions />
+                            <RecentTransactions renderTransaction={!hideTransactions} />
                         </ModalBody>
                     )}
                 </ModalContent>

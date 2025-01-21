@@ -1,17 +1,56 @@
 import { Avatar, Button, Spinner } from "@nextui-org/react"
 import { Appbar } from "../components/Appbar"
-import { useRecoilRefresher_UNSTABLE, useRecoilValue, useRecoilValueLoadable } from "recoil"
+import { useRecoilRefresher_UNSTABLE, useRecoilValueLoadable } from "recoil"
 import { profileImageInfoAtom, userAtom } from "../store/atoms"
-import { memo } from "react"
+import { memo, useState } from "react"
+import { UpdateInfo } from "../components/UpdateInfo"
+import { ImageInput } from "../components/ImageInput"
+import axios from "axios"
+import { useNavigate } from "react-router-dom"
+const backendUrl = import.meta.env.VITE_BACKEND_URL
+
 
 export const Profile = () => {
 
-    const userInfo = useRecoilValue(userAtom);
+    const userInfo = useRecoilValueLoadable(userAtom);
     const profileImage = useRecoilValueLoadable(profileImageInfoAtom);
+    const refreshProfile = useRecoilRefresher_UNSTABLE(profileImageInfoAtom);
+    const [openUpdateInfo, setOpenUpdateInfo] = useState(false);
+    const [openImageInput, setOpenImageInput] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const navigate = useNavigate();
+    
+
+    const removeProfilePicture = async () => {
+        setIsLoading(true);
+        try {
+            const token = localStorage.getItem("token");
+            if (!token) {
+                navigate("/signin");
+            }
+
+            const response = await axios.put(`${backendUrl}/user/removeprofileimage`, {}, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            console.log(response.data)
+            if (response.status === 200) {
+                refreshProfile();
+            }
+            setIsLoading(false);
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+
+
     return (
-        <div className="flex w-screen h-screen bg-gradient-to-br from-dash-form  to-dash-to">
+        <div className="flex w-screen h-screen bg-gradient-to-br from-dash-form to-dash-to">
             <div className="grid grid-rows-10 w-full h-full">
-                <Appbar name={userInfo.name} email={userInfo.email} hideNavAvtar={true} />
+                <Appbar name={userInfo.name} email={userInfo.email} hideNavAvtar={true} hideTransactions={true} />
 
                 <div className="row-span-4  flex justify-center items-center">
                     <div className="flex flex-col gap-4 justify-center items-center">
@@ -19,7 +58,7 @@ export const Profile = () => {
                             {
                                 profileImage.state === "loading" ? (
                                     <>
-                                        <Spinner color="primary" size="lg"/>
+                                        <Spinner color="primary" size="lg" />
                                     </>
                                 ) : profileImage.state === "hasError" ? (
                                     <>
@@ -56,57 +95,90 @@ export const Profile = () => {
                                         />
                                     </>
                                 )
-                            } 
+                            }
                         </div>
                         <div className="text-4xl font-semibold">
-                            {userInfo.name.charAt(0).toUpperCase() + userInfo.name.slice(1).toLowerCase()}
+                            {userInfo.state === "loading" ? (
+                                <Spinner />
+                            ) : userInfo.state === "hasError" ? (
+                                <div>{userInfo.contents?.response?.data?.message}</div>
+                            ) : (
+                                <>
+                                    {userInfo.contents.name.charAt(0).toUpperCase() + userInfo.contents.name.slice(1).toLowerCase()}
+                                </>
+                            )}
+
                         </div>
                     </div>
                 </div>
                 <div className="flex flex-col gap-4 row-span-6">
-                        <div className=" flex flex-col gap-2 w-full px-2">
-                            <div className="font-extralight border-b-1 py-2 border-default-300 px-2">
-                                Name : {userInfo.name.charAt(0).toUpperCase() + userInfo.name.slice(1).toLowerCase()}
-                            </div>
-                            <div className="font-extralight border-b-1 pb-2 border-default-300 pl-2">
-                                Email : {userInfo.email}
-                            </div>
+                    <div className=" flex flex-col gap-2 w-full px-2">
+                        <div className="font-extralight border-b-1 py-2 border-default-300 px-2">
+                            {userInfo.state === "loading" ? (
+                                <Spinner />
+                            ) : (
+                                <>
+                                    Name : {userInfo.contents.name.charAt(0).toUpperCase() + userInfo.contents.name.slice(1).toLowerCase()}
+                                </>
+                            )}
+
                         </div>
-                        <div className="px-2">
-                            <Button
-                                size="md"
-                                variant="light"
-                                radius="full"
-                                color="primary"
-                                className="border-1 border-primary-300 font-light text-primary-300"
-                            >
-                                Update information
-                            </Button>
+                        <div className="font-extralight border-b-1 pb-2 border-default-300 pl-2">
+                            {userInfo.state === "loading" ? (
+                                <Spinner />
+                            ) : (
+                                <>
+                                    Email : {userInfo.contents.email}
+                                </>
+                            )}
+
+
                         </div>
-                        <div className="px-2">
-                            <Button
-                                size="md"
-                                variant="light"
-                                radius="full"
-                                color="primary"
-                                className="border-1 border-primary-300 font-light text-primary-300"
-                            >
-                               {profileImage.contents.hasImage ? <>Change profile picture</> : <>Add profile picture</>}
-                            </Button>
-                        </div>
-                        <div className="px-2">
-                            <Button
-                                size="md"
-                                variant="light"
-                                radius="full"
-                                color="danger"
-                                className="border-1 border-danger-300 font-light text-danger-300"
-                            >
-                               Remove profile picture
-                            </Button>
-                        </div>
+                    </div>
+                    <div className="px-2">
+                        <Button
+                            size="md"
+                            variant="light"
+                            radius="full"
+                            color="primary"
+                            className="border-1 border-primary-300 font-light text-primary-300"
+                            onPress={() => setOpenUpdateInfo(true)}
+                        >
+                            Update information
+                        </Button>
+                    </div>
+                    <div className="px-2">
+                        <Button
+                            size="md"
+                            variant="light"
+                            radius="full"
+                            color="primary"
+                            className="border-1 border-primary-300 font-light text-primary-300"
+                            onPress={() => setOpenImageInput(true)}
+                        >
+                            {profileImage.contents.hasImage ? <>Change profile picture</> : <>Add profile picture</>}
+                        </Button>
+                    </div>
+                    <div className="px-2">
+                        <Button
+                            size="md"
+                            variant="light"
+                            radius="full"
+                            color="danger"
+                            isLoading={isLoading}
+                            className="border-1 border-danger-300 font-light text-danger-300"
+                            onPress={removeProfilePicture}
+                        >
+                            Remove profile picture
+                        </Button>
+                    </div>
+
                 </div>
+
             </div>
+            {openUpdateInfo && (<UpdateInfo setOpenUpdateInfo={setOpenUpdateInfo} />)}
+            {openImageInput && (<ImageInput setOpenImageInput={setOpenImageInput} />)}
+            { }
         </div>
     )
 }

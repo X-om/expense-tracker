@@ -153,7 +153,7 @@ userRouter.post("/signin",signinInputValidation,userExistAndPasswordCheck,(req,r
 // #########################################
 
 const updateSchema = zod.object({
-    name : zod.string().min(1,"name can not be this small ").optional(),
+    name : zod.string().min(0,"name can not be this small ").optional(),
     
     password : zod.object({
 
@@ -182,6 +182,7 @@ function updateInputValidation(req,res,next){
             message : err.message
         }));
 
+
         return res.status(403).json(errors);
     }
 
@@ -199,6 +200,7 @@ async function handleUpdate(req,res,next){
             }
 
             const isCurrentPasswordValid = await argon2.verify(user.hashed_password, current_password);
+
             if(!isCurrentPasswordValid){
                 return res.status(400).json({message : "incorrect current password"});
             }
@@ -261,25 +263,39 @@ userRouter.get("/userinfo",authMiddleware, async (req,res)=>{
     }
 })
 
-userRouter.get("/profileimage",authMiddleware, async (req,res) => {
-    const userId = req.userId;
-    try{
-        const imageInfo = await ProfileImage.findOne({userId:userId} , {_id : 0 , userId : 0, __v : 0});
-
-        if(!imageInfo){
-            return res.status(404).json({
-                message : "Image info not found"
-            })
-        }
-
-        res.json(imageInfo);
-    } catch(error){
-        console.log(`error occured during fetching the profile image info ${error}`);
-        return res.status(500).json({
-            message : "Internal server error"
-        })
+async function fetchImageInfo(userId) {
+    let retries = 3;
+    while (retries > 0) {
+      try {
+        return await ProfileImage.findOne({ userId }, { _id: 0, userId: 0, __v: 0 });
+      } catch (error) {
+        console.log("Retrying due to error:", error);
+        retries--;
+        if (retries === 0) throw error;
+      }
     }
-})
+}
+
+userRouter.get("/profileimage", authMiddleware, async (req, res) => {
+    const userId = req.userId;
+    try {
+      const imageInfo = await fetchImageInfo(userId);
+  
+      if (!imageInfo) {
+        return res.status(404).json({
+          message: "Image info not found",
+        });
+      }
+  
+      res.json(imageInfo);
+    } catch (error) {
+      console.error(`Error occurred during fetching the profile image info: ${error}`);
+      return res.status(500).json({
+        message: "Internal server error",
+      });
+    }
+  });
+  
 
 userRouter.put("/addprofileimage",authMiddleware,async (req,res)=> {
     const userId = req.userId;
@@ -295,6 +311,23 @@ userRouter.put("/addprofileimage",authMiddleware,async (req,res)=> {
             message : "Internal server error"
         })
     }
-})
+});
+
+userRouter.put("/removeprofileimage",authMiddleware,async (req,res)=>{
+
+    const userId = req.userId;
+    const url = "";
+    try{
+        await ProfileImage.updateOne({userId : userId} , {hasImage : false , imageUrl : url});
+        return res.json({
+            message : "image removed successfully !"
+        });
+    } catch(error){
+        console.log("error while removing image !");
+        return res.status(500).json({
+            message : "Internal server error !"
+        });
+    }
+});
 
 module.exports = userRouter;

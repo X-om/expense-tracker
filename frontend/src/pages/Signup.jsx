@@ -94,7 +94,7 @@ export const Signup = () => {
 
 
     return (
-        <div className="flex flex-col h-screen w-screen justify-center gap-4 bg-gradient-to-br from-dash-form  to-dash-to ">
+        <div className="flex flex-col h-screen w-screen justify-center gap-4 bg-gradient-to-br from-dash-form   to-dash-to ">
             <div>
                 {serverErrors && (
                     <AlertMessage type="error" message={serverErrors} onClose={() => {

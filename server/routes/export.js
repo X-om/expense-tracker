@@ -4,9 +4,27 @@ const exportRouter = express.Router();
 const ExcelJs = require("exceljs");
 const { Expense } = require("../db");
 
+const getFirstDayOfMonth = (startdate) => {
+    const nextMonthDate = new Date(startdate);
+    nextMonthDate.setMonth(nextMonthDate.getMonth() + 1);
+    nextMonthDate.setDate(1)
+    return nextMonthDate.toISOString()
+}
+
+
 exportRouter.get("/xlsx", authMiddleware, async (req, res) => {
+    const userId = req.userId;
+    const startdate = req.query.month;
+    const enddate = getFirstDayOfMonth(startdate)
+
+    const query = { userId: userId };
+    query.spendDate = {
+        $gte: new Date(startdate),
+        $lt: new Date(enddate),
+    };
+
     try {
-        const expenses = await Expense.find({ userId: req.userId }, { userId: 0, _id: 0, accountId: 0, __v: 0 });
+        const expenses = await Expense.find(query, { userId: 0, _id: 0, accountId: 0, __v: 0 }).sort({spendDate : 1});
         if (expenses.length === 0) {
             return res.status(404).json({
                 message: "No expense data is found"
@@ -44,7 +62,7 @@ exportRouter.get("/xlsx", authMiddleware, async (req, res) => {
 
         const xlsxBuffer = await workbook.xlsx.writeBuffer();
 
-        res.setHeader("Content-Disposition", "attachment; filename=expenses.xlsx");
+        res.setHeader("Content-Disposition", `attachment; filename=expenses.xlsx`);
         res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
 
         res.send(xlsxBuffer);
@@ -57,8 +75,19 @@ exportRouter.get("/xlsx", authMiddleware, async (req, res) => {
 });
 
 exportRouter.get("/csv", authMiddleware, async (req, res) => {
+    const userId = req.userId;
+    const startdate = req.query.month;
+    const enddate = getFirstDayOfMonth(startdate)
+
+    const query = { userId: userId };
+    query.spendDate = {
+        $gte: new Date(startdate),
+        $lt: new Date(enddate),
+    };
+
+
     try {
-        const expenses = await Expense.find({ userId: req.userId }, { userId: 0, _id: 0, accountId: 0, __v: 0 });
+        const expenses = await Expense.find(query, { userId: 0, _id: 0, accountId: 0, __v: 0 }).sort({spendDate : 1});
         if (expenses.length === 0) {
             return res.status(404).json({
                 message: "No expense data is found"

@@ -4,59 +4,59 @@ import { atom, selector } from "recoil";
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 export const userAtom = atom({
-  key: "userAtom",
-  default: selector({
-    key: "userSelector",
-    get: async () => {
-        const token = localStorage.getItem('token');
-        if(!token){
-            throw new Error('No authentication token found');  
-        }
-        
-        try{
-            await new Promise((resolve) => setTimeout(resolve,1000))
-            const response = await axios.get(`${backendUrl}/user/userinfo`,{
-                headers : {
-                    Authorization : `Bearer ${token}`
-                }
-            });
-
-            if (!response.data) {
-                throw new Error('No user data received');
+    key: "userAtom",
+    default: selector({
+        key: "userSelector",
+        get: async () => {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                throw new Error('No authentication token found');
             }
 
-            return response.data;
-        } catch(error){
-            throw error;
-        }
-    },
-  }),
-});
-
-export const accountAtom = atom({
-    key : "accountAtom",
-    default : selector({
-        key : "accountSelector",
-        get : async () => {
-            const token = localStorage.getItem("token");
-
-            if(!token){
-                throw new Error("No authentication token found");
-            }
-
-            try{
-                const response = await axios.get(`${backendUrl}/account/currentinfo`,{
-                    headers : {
-                        Authorization : `Bearer ${token}`
+            try {
+                await new Promise((resolve) => setTimeout(resolve, 1000))
+                const response = await axios.get(`${backendUrl}/user/userinfo`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
                     }
                 });
 
-                if(!response.data){
+                if (!response.data) {
+                    throw new Error('No user data received');
+                }
+
+                return response.data;
+            } catch (error) {
+                throw error;
+            }
+        },
+    }),
+});
+
+export const accountAtom = atom({
+    key: "accountAtom",
+    default: selector({
+        key: "accountSelector",
+        get: async () => {
+            const token = localStorage.getItem("token");
+
+            if (!token) {
+                throw new Error("No authentication token found");
+            }
+
+            try {
+                const response = await axios.get(`${backendUrl}/account/currentinfo`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+
+                if (!response.data) {
                     throw new Error("No user data received");
                 }
 
                 return response.data;
-            }catch(error){
+            } catch (error) {
                 throw error;
             }
         }
@@ -64,27 +64,27 @@ export const accountAtom = atom({
 })
 
 export const sumOfCategoriesAtom = atom({
-    key : "sumOfCategoriesAtom",
-    default : selector({
-        key : "sumOfCategoriesSelector",
-        get : async () => {
+    key: "sumOfCategoriesAtom",
+    default: selector({
+        key: "sumOfCategoriesSelector",
+        get: async () => {
             const token = localStorage.getItem("token");
-                if(!token){
-                    throw new Error("No authentication token found");
-                }
-            try{
-                const response = await axios.get(`${backendUrl}/account/totalbycategorty`,{
-                    headers : {
-                        Authorization : `Bearer ${token}`
+            if (!token) {
+                throw new Error("No authentication token found");
+            }
+            try {
+                const response = await axios.get(`${backendUrl}/account/totalbycategorty`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
                     }
                 });
-                if(!response.data){
+                if (!response.data) {
                     throw new Error("No expense data received");
                 }
 
                 return response.data;
 
-            }catch(error){
+            } catch (error) {
                 throw error;
             }
         }
@@ -92,41 +92,69 @@ export const sumOfCategoriesAtom = atom({
 })
 
 export const blurAtom = atom({
-    key : "blurAtom",
-    default : false  
+    key: "blurAtom",
+    default: false
 })
 
 export const initialBalanceAtom = atom({
-    key : "initialBalanceAtom",
-    default : 0
+    key: "initialBalanceAtom",
+    default: 0
 })
 
 export const profileImageInfoAtom = atom({
-    key : "profileImageInfoAtom",
-    default : selector ({
-        key : "profileImageInfoSelector",
-        get : async () => {
-            new Promise((r) => setTimeout(r,3000));
+    key: "profileImageInfoAtom",
+    default: selector({
+        key: "profileImageInfoSelector",
+        get: async () => {
+            new Promise((r) => setTimeout(r, 1000));
             const token = localStorage.getItem("token");
-            if(!token)
-                throw new Error('No authentication token found');  
-            
-            try{
-                const response = await axios.get(`${backendUrl}/user/profileimage`,{
-                    headers : {
-                        Authorization : `Bearer ${token}`
+            if (!token)
+                throw new Error('No authentication token found');
+
+            try {
+                const response = await axios.get(`${backendUrl}/user/profileimage`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
                     }
                 });
 
-                if(!response.data){
+                if (!response.data) {
+                    throw new Error("No expense data received");
+                }
+
+                return response.data
+
+            } catch (error) {
+                throw error;
+            }
+        }
+    })
+});
+
+export const categoriesInfoAtom = atom({
+    key: "categoriesInfoAtom",
+    default: selector({
+        key: "categoriesInfoSelector",
+        get: async () => {
+            const token = localStorage.getItem("token");
+            if(!token){
+                throw new Error('No authentication token found');
+            }
+            try {
+                const response = await axios.get(`${backendUrl}/account/totalbycategorty`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
+                if (!response.data) {
                     throw new Error("No expense data received");
                 }
                 
                 return response.data
-
-            }catch (error){
-                throw error;
-            }
+            } catch (error) {
+                throw error  
+            } 
         }
     })
 })

@@ -102,6 +102,7 @@ export const ImageInput = ({ setOpenImageInput }) => {
                 message : "Profile picture updated.. !"
             });
             onClose();
+            setOpenImageInput(false);
         } catch(error){
             console.error("Error uploading image:", error);
             setErrorResponse({

@@ -15,10 +15,10 @@ module.exports = {
       colors: {
         "darkBg": "#18181b",
         "dark-800": "#27272A",
-
+        //#3E3D38
         "dash-form" : "#0000",
-        "dash-via" : "#0B2b26",
-        "dash-to" : "#0b1f1b"
+        "dash-via" : "#F7CBCA",
+        "dash-to" : "#2D3250"
       },
   
       
