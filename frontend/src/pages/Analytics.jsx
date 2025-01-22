@@ -4,7 +4,7 @@ import { categoriesInfoAtom, userAtom } from "../store/atoms";
 import { PieChart } from "../components/PieChart";
 import { Tab, Tabs } from "@nextui-org/react";
 import {BarChart3D} from "../components/BarChart3D";
-import { BarChart2D } from "../components/BArChart2D";
+import { BarChart2D } from "../components/BarChart2D";
 
 
 export const Analytics = () => {
