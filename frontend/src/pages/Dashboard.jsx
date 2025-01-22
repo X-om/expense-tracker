@@ -74,7 +74,7 @@ export const Dashboard = () => {
                         </div>
                     ) : userInfo.state === "hasError" ? (
                         <div className="flex flex-col justify-center w-full h-full">
-                            <AlertMessage type={"error"} message={userInfo.contents?.response?.data?.message || userInfo.contents.message} onClose={() => { navigate("/signin") }} />
+                            <AlertMessage type={"error"} message={userInfo.contents?.response?.data?.message || userInfo.contents.message} onClose={() => { localStorage.clear(); window.location.href = "/" }} />
                         </div>
                     ) : (
                         <div className="bg-inherit flex flex-col gap-4 h-full" >
