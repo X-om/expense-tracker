@@ -10,6 +10,7 @@ export const userAtom = atom({
         get: async () => {
             const token = localStorage.getItem('token');
             if (!token) {
+                window.location.href = "/";
                 throw new Error('No authentication token found');
             }
 
@@ -41,6 +42,7 @@ export const accountAtom = atom({
             const token = localStorage.getItem("token");
 
             if (!token) {
+                window.location.href = "/";
                 throw new Error("No authentication token found");
             }
 
@@ -70,6 +72,7 @@ export const sumOfCategoriesAtom = atom({
         get: async () => {
             const token = localStorage.getItem("token");
             if (!token) {
+                window.location.href = "/";
                 throw new Error("No authentication token found");
             }
             try {
@@ -91,10 +94,6 @@ export const sumOfCategoriesAtom = atom({
     })
 })
 
-export const blurAtom = atom({
-    key: "blurAtom",
-    default: false
-})
 
 export const initialBalanceAtom = atom({
     key: "initialBalanceAtom",
@@ -108,8 +107,11 @@ export const profileImageInfoAtom = atom({
         get: async () => {
             new Promise((r) => setTimeout(r, 1000));
             const token = localStorage.getItem("token");
-            if (!token)
+            if (!token){
+                window.location.href = "/";
                 throw new Error('No authentication token found');
+            }
+                
 
             try {
                 const response = await axios.get(`${backendUrl}/user/profileimage`, {
@@ -138,6 +140,7 @@ export const categoriesInfoAtom = atom({
         get: async () => {
             const token = localStorage.getItem("token");
             if(!token){
+                window.location.href = "/";
                 throw new Error('No authentication token found');
             }
             try {

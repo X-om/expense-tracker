@@ -3,7 +3,6 @@ import ProgressBar from "./ProgressBar";
 import { useRecoilValue } from "recoil";
 import { initialBalanceAtom } from "../store/atoms";
 
-
 export const MainCard = ({ income, balance, budget, totalSpend, isLoading}) => {
     const initialBalance = useRecoilValue(initialBalanceAtom);
     const balancePercentage = (balance / initialBalance) * 100;

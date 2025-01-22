@@ -1,3 +1,20 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+#git-container:hover #git-path{
+    fill : white ;
+}
+
+#twitter-container:hover #twitter-path{
+    fill :white;
+}
+
+
+#linkdin-container:hover #linkdin-path{
+    fill: #338EF7;
+}
+
+#discord-container:hover #discord-path{
+    fill: skyblue;
+}

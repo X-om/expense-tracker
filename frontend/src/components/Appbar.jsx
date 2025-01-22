@@ -17,12 +17,12 @@ import {
     useDisclosure,
     Spinner,
 } from "@nextui-org/react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { memo, useState, useMemo } from "react";
 import { RecentTransactions } from "./RecentTransactions";
 import { ImageInput } from "./ImageInput";
-import { useRecoilValueLoadable } from "recoil";
-import { profileImageInfoAtom } from "../store/atoms";
+import { useRecoilValueLoadable, useResetRecoilState } from "recoil";
+import { accountAtom, categoriesInfoAtom, profileImageInfoAtom, sumOfCategoriesAtom, userAtom } from "../store/atoms";
 import { AlertMessage } from "./AlertMessage";
 
 export const Appbar = ({ name, email, hideNavAvtar, hideTransactions }) => {
@@ -30,9 +30,24 @@ export const Appbar = ({ name, email, hideNavAvtar, hideTransactions }) => {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const profileImage = useRecoilValueLoadable(profileImageInfoAtom);
     const [openImageInput, setOpenImageInput] = useState(false);
+    const resetUserAtom = useResetRecoilState(userAtom);
+    const resetAccountAttom = useResetRecoilState(accountAtom);
+    const resetSumOfAllCategoriesAtom = useResetRecoilState(sumOfCategoriesAtom);
+    const resetProfileImageInfoAtom = useResetRecoilState(profileImageInfoAtom);
+    const resetCategoriesInfoAtom = useResetRecoilState(categoriesInfoAtom);
+    const navigate = useNavigate();
 
     const logOutOperation = () => {
-
+        localStorage.removeItem("token");
+        localStorage.clear();
+        resetUserAtom();
+        resetAccountAttom();
+        resetSumOfAllCategoriesAtom();
+        resetProfileImageInfoAtom();
+        resetCategoriesInfoAtom();
+        
+        window.location.href = "/";
+        
     }
 
     const menuItems = useMemo(

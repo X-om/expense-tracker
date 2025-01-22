@@ -6,23 +6,30 @@ import { RecoilRoot } from "recoil"
 import { Profile } from "./pages/Profile"
 import { Exports } from "./pages/Exports"
 import { Analytics } from "./pages/Analytics"
+import RouteGuard from "./components/RouteGuard"
+import { Landing } from "./pages/Landing"
+import { LandingGuard } from "./components/LandingGuard"
+import MobileGuard from "./components/MobileGuard"
 
 function App() {
 
 
   return (
-      <RecoilRoot>
-        <BrowserRouter>
+    <RecoilRoot>
+      <BrowserRouter>
+        <MobileGuard>
           <Routes>
-            <Route path="/signup" element={<Signup/>}/>
-            <Route path="/signin" element={<Signin/>}/>
-            <Route path="/dashboard" element={<Dashboard/>}/>
-            <Route path="/profile" element={<Profile/>}/>
-            <Route path="/exports" element={<Exports/>}/>
-            <Route path="/analytics" element={<Analytics/>}/>
+            <Route path="/" element={<LandingGuard><Landing/></LandingGuard>}/>
+            <Route path="/signup" element={<LandingGuard><Signup/></LandingGuard>} />
+            <Route path="/signin" element={<LandingGuard><Signin/></LandingGuard>} />
+            <Route path="/dashboard" element={<RouteGuard><Dashboard /></RouteGuard>} />
+            <Route path="/profile" element={<RouteGuard><Profile /></RouteGuard>} />
+            <Route path="/exports" element={<RouteGuard><Exports /></RouteGuard>} />
+            <Route path="/analytics" element={<RouteGuard><Analytics /></RouteGuard>} />
           </Routes>
-        </BrowserRouter>    
-      </RecoilRoot>
+        </MobileGuard>
+      </BrowserRouter>
+    </RecoilRoot>
   )
 }
 export default App

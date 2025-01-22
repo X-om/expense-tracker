@@ -40,6 +40,10 @@ export const RecentTransactions = memo(({ renderTransaction }) => {
                             }
                         });
                     console.log(response.data)
+                    setResponseError({
+                        status : false,
+                        message : ""
+                    })
                     setIsLoading(true);
                     setTransactions(response.data);
                 } catch (error) {
